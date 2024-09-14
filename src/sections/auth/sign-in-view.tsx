@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -10,40 +10,83 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import { useRouter } from 'src/routes/hooks';
+import { useAppDispatch } from 'src/routes/hooks/hookes';
+
+import { CONFIG } from 'src/config-global';
+import { login, logout } from 'src/features/auth/authSlice';
 
 import { Iconify } from 'src/components/iconify';
+import LoadingComponent from 'src/components/loading/Loading';
+import { Alert } from '@mui/material';
+
 
 // ----------------------------------------------------------------------
 
 export function SignInView() {
   const router = useRouter();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const dispatch = useAppDispatch();
+  const urlEnv = CONFIG.urlLogin;
+  const loginFetch = async () => {
+    setLoading(true);
+    const values = {
+      email: username,
+      password
+    }
+
+    const loggedInResponse = await fetch(`${urlEnv}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(values)
+    });
+
+      const {status} = loggedInResponse;
+      
+      if(status === 200){
+        const loggedIn = await loggedInResponse.json();
+        dispatch(login({username : loggedIn.user.firstName, picturePath: loggedIn.user.picturePath, email: loggedIn.user.email, token: loggedIn.token,}))
+        router.push('/'); 
+      } else{
+        setError(true);
+      }
+      setLoading(false);
+  }
+
+  const handleLogin = () => {
+    if (username) {
+      loginFetch();
+    }
+  }
+
+  const handleLogout = () => {
+    dispatch(logout())
+  }
 
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [isErro, setError] = useState(false);
+  useEffect(() => handleLogout());
 
-  const handleSignIn = useCallback(() => {
-    router.push('/');
-  }, [router]);
 
+  
   const renderForm = (
     <Box display="flex" flexDirection="column" alignItems="flex-end">
+   
       <TextField
         fullWidth
         name="email"
         label="Email address"
-        defaultValue="hello@gmail.com"
+        onChange={(e) => setUsername(e.target.value)}
         InputLabelProps={{ shrink: true }}
         sx={{ mb: 3 }}
       />
-
-      <Link variant="body2" color="inherit" sx={{ mb: 1.5 }}>
-        Forgot password?
-      </Link>
 
       <TextField
         fullWidth
         name="password"
         label="Password"
-        defaultValue="@demo1234"
+        onChange={(e) => setPassword(e.target.value)}
         InputLabelProps={{ shrink: true }}
         type={showPassword ? 'text' : 'password'}
         InputProps={{
@@ -64,47 +107,26 @@ export function SignInView() {
         type="submit"
         color="inherit"
         variant="contained"
-        onClick={handleSignIn}
+        onClick={handleLogin}
       >
-        Sign in
+        {!loading ? <>Sign in</> : <LoadingComponent />}
+        
       </LoadingButton>
     </Box>
   );
 
   return (
     <>
+       
       <Box gap={1.5} display="flex" flexDirection="column" alignItems="center" sx={{ mb: 5 }}>
         <Typography variant="h5">Sign in</Typography>
-        <Typography variant="body2" color="text.secondary">
-          Don’t have an account?
-          <Link variant="subtitle2" sx={{ ml: 0.5 }}>
-            Get started
-          </Link>
-        </Typography>
+        
       </Box>
 
+      <Alert severity="error" sx={{ display: isErro ? 'block' : 'none', borderRadius: 0, mb: 2 }}>
+                Email/Passoword wrong!
+      </Alert>
       {renderForm}
-
-      <Divider sx={{ my: 3, '&::before, &::after': { borderTopStyle: 'dashed' } }}>
-        <Typography
-          variant="overline"
-          sx={{ color: 'text.secondary', fontWeight: 'fontWeightMedium' }}
-        >
-          OR
-        </Typography>
-      </Divider>
-
-      <Box gap={1} display="flex" justifyContent="center">
-        <IconButton color="inherit">
-          <Iconify icon="logos:google-icon" />
-        </IconButton>
-        <IconButton color="inherit">
-          <Iconify icon="eva:github-fill" />
-        </IconButton>
-        <IconButton color="inherit">
-          <Iconify icon="ri:twitter-x-fill" />
-        </IconButton>
-      </Box>
     </>
   );
 }

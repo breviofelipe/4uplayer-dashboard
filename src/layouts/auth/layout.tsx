@@ -5,9 +5,8 @@ import Alert from '@mui/material/Alert';
 
 import { RouterLink } from 'src/routes/components';
 
+import Icon4uPlayer from 'src/components/image-icons/Icon4uPlayer';
 import { stylesMode } from 'src/theme/styles';
-
-import { Logo } from 'src/components/logo';
 
 import { Main } from './main';
 import { HeaderSection } from '../core/header-section';
@@ -49,7 +48,7 @@ export function AuthLayout({ sx, children, header }: AuthLayoutProps) {
                 This is an info Alert.
               </Alert>
             ),
-            leftArea: <Logo />,
+            leftArea: <Icon4uPlayer />,
             rightArea: (
               <Link
                 component={RouterLink}

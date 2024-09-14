@@ -8,6 +8,9 @@ import { varAlpha } from 'src/theme/styles';
 import { AuthLayout } from 'src/layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
 
+import { useAppSelector } from './hooks/hookes';
+
+
 // ----------------------------------------------------------------------
 
 export const HomePage = lazy(() => import('src/pages/home'));
@@ -33,14 +36,20 @@ const renderFallback = (
 );
 
 export function Router() {
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+  
+  
   return useRoutes([
     {
       element: (
-        <DashboardLayout>
-          <Suspense fallback={renderFallback}>
-            <Outlet />
-          </Suspense>
-        </DashboardLayout>
+        isAuthenticated ? <DashboardLayout>
+        <Suspense fallback={renderFallback}>
+          <Outlet />
+        </Suspense>
+      </DashboardLayout> :
+      <AuthLayout>
+        <SignInPage />
+      </AuthLayout>
       ),
       children: [
         { element: <HomePage />, index: true },
