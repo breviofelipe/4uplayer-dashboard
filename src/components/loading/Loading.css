@@ -7,9 +7,9 @@
 }
 
 .spinner {
-    width: 34px;
-    height: 34px;
-    border: 8px solid;
+    width: 24px;
+    height: 24px;
+    border: 4px solid;
     border-color: #3d5af1 transparent #3d5af1 transparent;
     border-radius: 50%;
     animation: spin-anim 1.2s linear infinite;

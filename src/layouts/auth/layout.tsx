@@ -5,8 +5,9 @@ import Alert from '@mui/material/Alert';
 
 import { RouterLink } from 'src/routes/components';
 
-import Icon4uPlayer from 'src/components/image-icons/Icon4uPlayer';
 import { stylesMode } from 'src/theme/styles';
+
+import Icon4uPlayer from 'src/components/image-icons/Icon4uPlayer';
 
 import { Main } from './main';
 import { HeaderSection } from '../core/header-section';

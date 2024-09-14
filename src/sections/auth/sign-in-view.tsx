@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
-import Divider from '@mui/material/Divider';
+import { Alert } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
@@ -17,7 +16,6 @@ import { login, logout } from 'src/features/auth/authSlice';
 
 import { Iconify } from 'src/components/iconify';
 import LoadingComponent from 'src/components/loading/Loading';
-import { Alert } from '@mui/material';
 
 
 // ----------------------------------------------------------------------
