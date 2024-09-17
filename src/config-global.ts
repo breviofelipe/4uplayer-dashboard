@@ -13,5 +13,5 @@ export type ConfigValue = {
 export const CONFIG: ConfigValue = {
   appName: 'Minimal UI',
   appVersion: packageJson.version,
-  urlLogin: "https://guarded-earth-81521-8a63ef2fadd3.herokuapp.com"
+  urlLogin: 'https://guarded-earth-81521-8a63ef2fadd3.herokuapp.com'
 };

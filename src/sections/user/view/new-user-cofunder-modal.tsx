@@ -9,28 +9,34 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
+  Alert,
 } from '@mui/material';
 import { Iconify } from 'src/components/iconify';
+import { CONFIG } from 'src/config-global';
+import { useAppSelector } from 'src/routes/hooks/hookes';
 
 interface FormData {
   email: string;
-  numericValue: string;
+  amountStake: string;
 }
 
 interface FormErrors {
   email: string;
-  numericValue: string;
+  amountStake: string;
 }
 
 export default function FormModal() {
+  const token = useAppSelector((state) => state.auth.token);
   const [open, setOpen] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [link, setLink] = useState('');
   const [formData, setFormData] = useState<FormData>({
     email: '',
-    numericValue: '',
+    amountStake: '',
   });
   const [errors, setErrors] = useState<FormErrors>({
     email: '',
-    numericValue: '',
+    amountStake: '',
   });
 
   const handleClickOpen = () => {
@@ -38,9 +44,10 @@ export default function FormModal() {
   };
 
   const handleClose = () => {
+    setSuccess(false);
     setOpen(false);
-    setFormData({ email: '', numericValue: '' });
-    setErrors({ email: '', numericValue: '' });
+    setFormData({ email: '', amountStake: '' });
+    setErrors({ email: '', amountStake: '' });
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,7 +67,7 @@ export default function FormModal() {
       } else if (!/\S+@\S+\.\S+/.test(value)) {
         errorMessage = 'Invalid email format';
       }
-    } else if (name === 'numericValue') {
+    } else if (name === 'amountStake') {
       if (!value) {
         errorMessage = 'Numeric value is required';
       } else if (value === '' || Number.isNaN(Number(value))) {
@@ -73,11 +80,25 @@ export default function FormModal() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!errors.email && !errors.numericValue) {
+    if (!errors.email && !errors.amountStake) {
       console.log('Form submitted:', formData);
-      handleClose();
+      fetch(`${CONFIG.urlLogin}/profile/emails/new-cofunder`,{
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify(formData)
+      }).then(async response => {
+        if(response.ok){
+          const body = await response.json();
+          setLink(body.uniqueLink)
+          setSuccess(true);
+        } else {
+          alert("Falha ao enviar formulario, entre em contato com o suporte!")
+        }
+      })
+      .catch(() => alert("Falha ao enviar formulario, entre em contato com o suporte!"));
+      
     }
   };
 
@@ -89,6 +110,9 @@ export default function FormModal() {
         New Cofunder
       </Button>
       <Dialog open={open} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="success" sx={{ display: success ? 'flex' : 'none', borderRadius: 0 }}>
+                Pre-cadastro realizado e email enviado! Link unico {link}
+        </Alert>
         <DialogTitle>New Cofunder</DialogTitle>
         <form onSubmit={handleSubmit}>
           <DialogContent>
@@ -111,21 +135,21 @@ export default function FormModal() {
             />
             <TextField
               margin="dense"
-              id="numericValue"
-              name="numericValue"
+              id="amountStake"
+              name="amountStake"
               label="Stake PLC Value"
               type="text"
               fullWidth
               variant="outlined"
-              value={formData.numericValue}
+              value={formData.amountStake}
               onChange={handleInputChange}
-              error={!!errors.numericValue}
-              helperText={errors.numericValue}
+              error={!!errors.amountStake}
+              helperText={errors.amountStake}
             />
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
-            <Button type="submit" disabled={!!errors.email || !!errors.numericValue}>
+            <Button type="submit" disabled={!!errors.email || !!errors.amountStake}>
               Submit
             </Button>
           </DialogActions>

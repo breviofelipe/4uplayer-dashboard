@@ -12,7 +12,6 @@ import TablePagination from '@mui/material/TablePagination';
 import { _users } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
 
-import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
 import { TableNoData } from '../table-no-data';
@@ -31,8 +30,6 @@ import type { UserProps } from '../user-table-row';
 export function UserView() {
 
   const table = useTable();
-
-  const [showModal, setShowModal] = useState(false);
   const [filterName, setFilterName] = useState('');
 
   const dataFiltered: UserProps[] = applyFilter({
@@ -49,18 +46,8 @@ export function UserView() {
         <Typography variant="h4" flexGrow={1}>
           Users
         </Typography>
-        {/* <Button
-          onClick={() => setShowModal(true)}
-          variant="contained"
-          color="inherit"
-          startIcon={<Iconify icon="mingcute:add-line" />}
-        >
-          New user
-        </Button> */}
         <FormModal />
       </Box>
-
-      {/* {showModal && <FormModal />} */}
 
       <Card>
         <UserTableToolbar
