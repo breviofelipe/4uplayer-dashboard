@@ -16,7 +16,6 @@ import { varAlpha } from 'src/theme/styles';
 import { Scrollbar } from 'src/components/scrollbar';
 import Icon4uPlayer from 'src/components/image-icons/Icon4uPlayer';
 
-import { NavUpgrade } from '../components/nav-upgrade';
 import { WorkspacesPopover } from '../components/workspaces-popover';
 
 import type { WorkspacesPopoverProps } from '../components/workspaces-popover';

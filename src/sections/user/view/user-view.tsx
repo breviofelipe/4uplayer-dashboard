@@ -17,6 +17,7 @@ import { Scrollbar } from 'src/components/scrollbar';
 
 import { TableNoData } from '../table-no-data';
 import { UserTableRow } from '../user-table-row';
+import FormModal from './new-user-cofunder-modal';
 import { UserTableHead } from '../user-table-head';
 import { TableEmptyRows } from '../table-empty-rows';
 import { UserTableToolbar } from '../user-table-toolbar';
@@ -24,11 +25,14 @@ import { emptyRows, applyFilter, getComparator } from '../utils';
 
 import type { UserProps } from '../user-table-row';
 
+
 // ----------------------------------------------------------------------
 
 export function UserView() {
+
   const table = useTable();
 
+  const [showModal, setShowModal] = useState(false);
   const [filterName, setFilterName] = useState('');
 
   const dataFiltered: UserProps[] = applyFilter({
@@ -45,14 +49,18 @@ export function UserView() {
         <Typography variant="h4" flexGrow={1}>
           Users
         </Typography>
-        <Button
+        {/* <Button
+          onClick={() => setShowModal(true)}
           variant="contained"
           color="inherit"
           startIcon={<Iconify icon="mingcute:add-line" />}
         >
           New user
-        </Button>
+        </Button> */}
+        <FormModal />
       </Box>
+
+      {/* {showModal && <FormModal />} */}
 
       <Card>
         <UserTableToolbar
