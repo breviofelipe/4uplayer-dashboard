@@ -33,7 +33,7 @@ export function SignInView() {
       password
     }
 
-    const loggedInResponse = await fetch(`${urlEnv}/auth/login`, {
+    const loggedInResponse = await fetch(`${urlEnv}/auth/login-dashboard`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(values)
