@@ -6,18 +6,16 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
-import TablePagination from '@mui/material/TablePagination';
 import LinearProgress from '@mui/material/LinearProgress';
+import TablePagination from '@mui/material/TablePagination';
 
 import { useAppDispatch, useAppSelector } from 'src/routes/hooks/hookes';
 
-import { _users } from 'src/_mock';
 import { CONFIG } from 'src/config-global';
 import { DashboardContent } from 'src/layouts/dashboard';
+import { setUsers, moreUsers } from 'src/features/users/usersSlice';
 
 import { Scrollbar } from 'src/components/scrollbar';
-
-import { moreUsers, setUsers } from 'src/features/users/usersSlice';
 
 import { TableNoData } from '../table-no-data';
 import { UserTableRow } from '../user-table-row';

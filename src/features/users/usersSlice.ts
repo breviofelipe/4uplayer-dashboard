@@ -1,7 +1,7 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
+import type { User } from 'src/sections/user/user-table-row';
 
 import { createSlice } from '@reduxjs/toolkit';
-import { User } from 'src/sections/user/user-table-row';
 
 interface UsersState {
   users: User[]
