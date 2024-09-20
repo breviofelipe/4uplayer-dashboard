@@ -1,18 +1,23 @@
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
-import Button from '@mui/material/Button';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
+import LinearProgress from '@mui/material/LinearProgress';
+
+import { useAppDispatch, useAppSelector } from 'src/routes/hooks/hookes';
 
 import { _users } from 'src/_mock';
+import { CONFIG } from 'src/config-global';
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { Scrollbar } from 'src/components/scrollbar';
+
+import { moreUsers, setUsers } from 'src/features/users/usersSlice';
 
 import { TableNoData } from '../table-no-data';
 import { UserTableRow } from '../user-table-row';
@@ -22,23 +27,60 @@ import { TableEmptyRows } from '../table-empty-rows';
 import { UserTableToolbar } from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
-import type { UserProps } from '../user-table-row';
+import type { User } from '../user-table-row';
+
 
 
 // ----------------------------------------------------------------------
 
+
+
 export function UserView() {
 
-  const table = useTable();
-  const [filterName, setFilterName] = useState('');
+  const token = useAppSelector((state) => state.auth.token);
+  const users = useAppSelector((state) => state.users.users);
+  const dispatch = useAppDispatch();
 
-  const dataFiltered: UserProps[] = applyFilter({
-    inputData: _users,
+  const [filterName, setFilterName] = useState('');
+  const [usersPage, setUserPages] = useState<any>({});
+  const [loading, setLoading] = useState(true);
+  const table = useTable();
+  const [page, setPage] = useState(table.page);
+  
+  const dataFiltered: User[] = applyFilter({
+    inputData: users,
     comparator: getComparator(table.order, table.orderBy),
     filterName,
   });
 
   const notFound = !dataFiltered.length && !!filterName;
+
+
+  const fetchUsers = useCallback(async () => {
+    if(page < table.page || table.page === 0){
+      setPage(table.page);
+      const response = await fetch(`${CONFIG.urlUsers}/admin/users?page=${table.page}&sizePerPage=25&sortDirection=ASC`,{
+        method: "GET",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      });
+      if(response.status === 200){
+        const body = await response.json();
+        if(body.first){
+          dispatch(setUsers({ users: body.content}))
+        } else {
+          const newUsers = body.content;
+          dispatch(moreUsers({ users: newUsers }))
+        }
+  
+        setUserPages(body);
+      }
+      setLoading(false);
+    }
+  }, [token, table.page, dispatch, page]);
+  
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]); 
 
   return (
     <DashboardContent>
@@ -50,7 +92,7 @@ export function UserView() {
       </Box>
 
       <Card>
-        <UserTableToolbar
+        {!loading ? <><UserTableToolbar
           numSelected={table.selected.length}
           filterName={filterName}
           onFilterName={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,21 +107,21 @@ export function UserView() {
               <UserTableHead
                 order={table.order}
                 orderBy={table.orderBy}
-                rowCount={_users.length}
+                rowCount={usersPage.totalElements}
                 numSelected={table.selected.length}
                 onSort={table.onSort}
                 onSelectAllRows={(checked) =>
                   table.onSelectAllRows(
                     checked,
-                    _users.map((user) => user.id)
+                    users.map((user) => user.id)
                   )
                 }
                 headLabel={[
-                  { id: 'name', label: 'Name' },
-                  { id: 'company', label: 'Company' },
+                  { id: 'firstName', label: 'Name' },
+                  { id: 'lastName', label: 'E-mail' },
                   { id: 'role', label: 'Role' },
-                  { id: 'isVerified', label: 'Verified', align: 'center' },
-                  { id: 'status', label: 'Status' },
+                  { id: 'emailCheck', label: 'Verified', align: 'center' },
+                  { id: 'credentialsNonExpired', label: 'Status' },
                   { id: '' },
                 ]}
               />
@@ -100,7 +142,7 @@ export function UserView() {
 
                 <TableEmptyRows
                   height={68}
-                  emptyRows={emptyRows(table.page, table.rowsPerPage, _users.length)}
+                  emptyRows={emptyRows(table.page, table.rowsPerPage, usersPage.totalElements)}
                 />
 
                 {notFound && <TableNoData searchQuery={filterName} />}
@@ -112,12 +154,16 @@ export function UserView() {
         <TablePagination
           component="div"
           page={table.page}
-          count={_users.length}
+          count={usersPage.totalElements}
           rowsPerPage={table.rowsPerPage}
           onPageChange={table.onChangePage}
           rowsPerPageOptions={[5, 10, 25]}
           onRowsPerPageChange={table.onChangeRowsPerPage}
-        />
+        /></>:
+        <Box sx={{ width: '100%' }}>
+          <LinearProgress/>
+        </Box>
+        }
       </Card>
     </DashboardContent>
   );
@@ -125,9 +171,9 @@ export function UserView() {
 
 // ----------------------------------------------------------------------
 
-export function useTable() {
+function useTable() {
   const [page, setPage] = useState(0);
-  const [orderBy, setOrderBy] = useState('name');
+  const [orderBy, setOrderBy] = useState('id');
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selected, setSelected] = useState<string[]>([]);
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');

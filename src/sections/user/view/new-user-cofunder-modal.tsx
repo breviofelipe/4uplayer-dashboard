@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import {
   Box,
+  Alert,
   Button,
   Dialog,
   TextField,
@@ -9,11 +10,13 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
-  Alert,
 } from '@mui/material';
-import { Iconify } from 'src/components/iconify';
-import { CONFIG } from 'src/config-global';
+
 import { useAppSelector } from 'src/routes/hooks/hookes';
+
+import { CONFIG } from 'src/config-global';
+
+import { Iconify } from 'src/components/iconify';
 
 interface FormData {
   email: string;

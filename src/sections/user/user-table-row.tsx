@@ -14,6 +14,38 @@ import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
+export interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  picturePath: string;
+  email: string;
+  role: Role;
+  emailCheck: boolean;
+  credentialsNonExpired: boolean;
+  password: string;
+  aboutUser: string; 
+  clan: string;
+  nickName: string;
+  viewedProfile: number;
+  impressions: number;
+  linkTiktok: string;
+  linkInstagram: string;
+  posts: string[];
+  medals: string[];
+  wallet: string;
+  missions: string[];
+  groups: string[];
+  clanOwner: boolean;
+  days: number;
+}
+
+export enum Role {
+  USER,
+  ADMIN,
+  PLAYER,
+  // Add other roles as needed
+}
 
 export type UserProps = {
   id: string;
@@ -26,7 +58,7 @@ export type UserProps = {
 };
 
 type UserTableRowProps = {
-  row: UserProps;
+  row: User;
   selected: boolean;
   onSelectRow: () => void;
 };
@@ -51,17 +83,17 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
 
         <TableCell component="th" scope="row">
           <Box gap={2} display="flex" alignItems="center">
-            <Avatar alt={row.name} src={row.avatarUrl} />
-            {row.name}
+            <Avatar alt={row.firstName} src={row.picturePath} />
+            {row.firstName}
           </Box>
         </TableCell>
 
-        <TableCell>{row.company}</TableCell>
+        <TableCell>{row.email}</TableCell>
 
         <TableCell>{row.role}</TableCell>
 
         <TableCell align="center">
-          {row.isVerified ? (
+          {row.emailCheck ? (
             <Iconify width={22} icon="solar:check-circle-bold" sx={{ color: 'success.main' }} />
           ) : (
             '-'
@@ -69,7 +101,7 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
         </TableCell>
 
         <TableCell>
-          <Label color={(row.status === 'banned' && 'error') || 'success'}>{row.status}</Label>
+          <Label color={(!row.credentialsNonExpired && 'error') || 'success'}>active</Label>
         </TableCell>
 
         <TableCell align="right">
