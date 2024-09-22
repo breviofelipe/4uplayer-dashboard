@@ -54,10 +54,13 @@ export function UserView() {
   const notFound = !dataFiltered.length && !!filterName;
 
 
+  
+  
+
   const fetchUsers = useCallback(async () => {
-    if(page < table.page || table.page === 0){
+    if(filterName === '' && (page < table.page || table.page === 0)){
       setPage(table.page);
-      const response = await fetch(`${CONFIG.urlUsers}/admin/users?page=${table.page}&sizePerPage=25&sortDirection=ASC`,{
+      const response = await fetch(`${CONFIG.urlUsers}/admin/users?page=${table.page}&sizePerPage=${table.rowsPerPage}&sortDirection=${table.order}`,{
         method: "GET",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       });
@@ -74,8 +77,8 @@ export function UserView() {
       }
       setLoading(false);
     }
-  }, [token, table.page, dispatch, page]);
-  
+  }, [token, table.page, dispatch, page, table.rowsPerPage, table.order, filterName]);
+
   useEffect(() => {
     fetchUsers();
   }, [fetchUsers]); 
@@ -91,12 +94,17 @@ export function UserView() {
 
       <Card>
         {!loading ? <><UserTableToolbar
-          numSelected={table.selected.length}
+          setUserPages={setUserPages}
           filterName={filterName}
-          onFilterName={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setFilterName(event.target.value);
-            table.onResetPage();
+          numSelected={table.selected.length}
+          page={table.page}
+          setFilterName={(val : string) => {
+            if(val.length > 2){
+              setFilterName(val);
+              table.onChangePage(null, 0);
+            }
           }}
+          rowsPerPage={table.rowsPerPage}
         />
 
         <Scrollbar>
@@ -174,12 +182,12 @@ function useTable() {
   const [orderBy, setOrderBy] = useState('id');
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selected, setSelected] = useState<string[]>([]);
-  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
+  const [order, setOrder] = useState<'ASC' | 'DESC'>('ASC');
 
   const onSort = useCallback(
     (id: string) => {
-      const isAsc = orderBy === id && order === 'asc';
-      setOrder(isAsc ? 'desc' : 'asc');
+      const isAsc = orderBy === id && order === 'ASC';
+      setOrder(isAsc ? 'DESC' : 'ASC');
       setOrderBy(id);
     },
     [order, orderBy]
