@@ -13,7 +13,7 @@ type UserTableHeadProps = {
   orderBy: string;
   rowCount: number;
   numSelected: number;
-  order: 'ASC' | 'DESC';
+  order: 'asc' | 'desc';
   onSort: (id: string) => void;
   headLabel: Record<string, any>[];
   onSelectAllRows: (checked: boolean) => void;
@@ -51,13 +51,13 @@ export function UserTableHead({
             <TableSortLabel
               hideSortIcon
               active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'ASC'}
+              direction={orderBy === headCell.id ? order : 'asc'}
               onClick={() => onSort(headCell.id)}
             >
               {headCell.label}
               {orderBy === headCell.id ? (
                 <Box sx={{ ...visuallyHidden }}>
-                  {order === 'DESC' ? 'sorted descending' : 'sorted ascending'}
+                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                 </Box>
               ) : null}
             </TableSortLabel>

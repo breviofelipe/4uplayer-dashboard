@@ -182,12 +182,12 @@ function useTable() {
   const [orderBy, setOrderBy] = useState('id');
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selected, setSelected] = useState<string[]>([]);
-  const [order, setOrder] = useState<'ASC' | 'DESC'>('ASC');
+  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
 
   const onSort = useCallback(
     (id: string) => {
-      const isAsc = orderBy === id && order === 'ASC';
-      setOrder(isAsc ? 'DESC' : 'ASC');
+      const isasc = orderBy === id && order === 'asc';
+      setOrder(isasc ? 'desc' : 'asc');
       setOrderBy(id);
     },
     [order, orderBy]

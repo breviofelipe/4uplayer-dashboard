@@ -36,7 +36,7 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
 // ----------------------------------------------------------------------
 
 export function getComparator<Key extends keyof any>(
-  order: 'ASC' | 'DESC',
+  order: 'asc' | 'desc',
   orderBy: Key
 ): (
   a: {
@@ -46,7 +46,7 @@ export function getComparator<Key extends keyof any>(
     [key in Key]: number | string;
   }
 ) => number {
-  return order === 'DESC'
+  return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
