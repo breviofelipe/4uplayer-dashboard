@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
-import { Grid, Button, Dialog, Avatar, MenuItem, Checkbox, TextField, Typography, DialogActions, DialogContent, FormControlLabel } from '@mui/material';
+import { Grid, Button, Dialog, Avatar, MenuItem, Checkbox, TextField, Typography, DialogActions, DialogContent, FormControlLabel, Alert, DialogTitle, DialogContentText } from '@mui/material';
 
 import { useAppSelector } from 'src/routes/hooks/hookes';
 
@@ -26,6 +26,9 @@ export default function UserModal( { user } : UserData) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [wallet, setWallet] = useState<Wallet>()
   const token = useAppSelector((state) => state.auth.token);
+  const [open, setOpen] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [amountStack, setAmountStake] = useState('');
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
@@ -73,6 +76,15 @@ export default function UserModal( { user } : UserData) {
       minute: '2-digit'
     }).format(date);
   }
+
+  const handleClose = () => {
+    setSuccess(false);
+    setOpen(false);
+  };
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setAmountStake(value);
+  };
 
   return (
     <div>
@@ -223,7 +235,51 @@ export default function UserModal( { user } : UserData) {
         </Grid>
           </DialogContent>
           <DialogActions>
-            {user.role.toString() !== 'PLAYER' && <Button onClick={handleCloseModal}>New Co-funder</Button>}
+            {user.role.toString() !== 'PLAYER' && <Button onClick={() => setOpen(true)}>New Co-funder</Button>}
+            <Dialog open={open} onClose={handleClose}>
+                <Alert onClose={handleClose} severity="success" sx={{ display: success ? 'flex' : 'none', borderRadius: 0 }}>
+                  Co-fundador criado com sucesso!
+                </Alert>
+                <DialogTitle>New Cofunder</DialogTitle>
+                  <DialogContent>
+                    <DialogContentText>
+                      Please enter the PLC stake value.
+                    </DialogContentText>                    
+                    <TextField
+                      margin="dense"
+                      id="amountStake"
+                      name="amountStake"
+                      label="Stake PLC Value"
+                      type="text"
+                      fullWidth
+                      variant="outlined"
+                      value={amountStack}
+                      onChange={handleInputChange}
+                      helperText="120000.00"
+                    />
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button onClick={async () => {
+                      const request = {
+                        email: user.email,
+                        amountStake: amountStack
+                      };
+                      const response = await fetch(`${CONFIG.urlUsers}/admin/new-cofunder`,{
+                        method: "POST",
+                        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                        body: JSON.stringify(request)
+                      });
+
+                      if(response.status === 200){
+                        setSuccess(true);
+                      }
+
+                    }} >
+                      Submit
+                    </Button>
+                  </DialogActions>
+            </Dialog>
             <Button onClick={handleCloseModal}>Tranfer PLC</Button>
             <Button onClick={handleCloseModal}>Cancel</Button>
           </DialogActions>
