@@ -60,7 +60,7 @@ export function UserView() {
   const fetchUsers = useCallback(async () => {
     if(filterName === '' && (page < table.page || table.page === 0)){
       setPage(table.page);
-      const response = await fetch(`${CONFIG.urlUsers}/admin/users?page=${table.page}&sizePerPage=${table.rowsPerPage}&sortDirection=${table.order}&orderBy=${table.orderBy}`,{
+      const response = await fetch(`${CONFIG.urlUsers}/admin/users?page=${table.page}&sizePerPage=${table.rowsPerPage}&sortDirection=${table.order.toUpperCase()}&orderBy=${table.orderBy}`,{
         method: "GET",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       });
