@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client';
 import { Suspense, StrictMode } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
-import { SpeedInsights } from "@vercel/speed-insights/next"
 
 import App from './app';
 import { store } from './store';
@@ -17,7 +16,7 @@ root.render(
     <HelmetProvider>
       <BrowserRouter>
         <Suspense>
-          <SpeedInsights />
+          
           <Provider store={store}>
             <App />
           </Provider>
