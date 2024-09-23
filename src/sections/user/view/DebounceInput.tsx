@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 
 import { OutlinedInput, InputAdornment } from '@mui/material';
 
@@ -12,38 +12,33 @@ interface DebounceInputProps {
 
 const DebounceInput: React.FC<DebounceInputProps> = ({
   onDebouncedChange,
-  placeholder = 'Search user...',
-  debounceTime = 1369
+  placeholder = 'Type here...',
+  debounceTime = 3000
 }) => {
   const [inputValue, setInputValue] = useState<string>('');
-  const [debouncedValue, setDebouncedValue] = useState<string>('');
-
-  const debounce = useCallback((func: (...args: any[]) => void, delay: number) => {
-    let timeoutId: NodeJS.Timeout;
-    return (...args: any[]) => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => func(...args), delay);
-    };
-  }, []); // Este useCallback não tem dependências
+  const [isDebouncing, setIsDebouncing] = useState<boolean>(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.target.value);
+    const newValue = event.target.value;
+    setInputValue(newValue);
+    setIsDebouncing(true);
+
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      onDebouncedChange(newValue);
+      setIsDebouncing(false);
+    }, debounceTime);
   };
 
-  const debouncedHandleChange = useCallback((value: string) => {
-    const debouncedFunc = debounce((val: string) => {
-      setDebouncedValue(val);
-    }, debounceTime);
-    debouncedFunc(value);
-  }, [debounce, debounceTime]);
-
-  useEffect(() => {
-    debouncedHandleChange(inputValue);
-  }, [inputValue, debouncedHandleChange]);
-
-  useEffect(() => {
-    onDebouncedChange(debouncedValue);
-  }, [debouncedValue, onDebouncedChange]);
+  useEffect(() => () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    }, []);
 
   return (
     <div>
@@ -59,7 +54,7 @@ const DebounceInput: React.FC<DebounceInputProps> = ({
           }
           sx={{ maxWidth: 320 }}
         />
-      {inputValue !== debouncedValue && (
+      {isDebouncing && (
         <p style={{ color: '#888', fontSize: '14px' }}>Waiting for you to stop typing...</p>
       )}
     </div>

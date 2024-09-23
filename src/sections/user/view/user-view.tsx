@@ -60,7 +60,7 @@ export function UserView() {
   const fetchUsers = useCallback(async () => {
     if(filterName === '' && (page < table.page || table.page === 0)){
       setPage(table.page);
-      const response = await fetch(`${CONFIG.urlUsers}/admin/users?page=${table.page}&sizePerPage=${table.rowsPerPage}&sortDirection=${table.order}`,{
+      const response = await fetch(`${CONFIG.urlUsers}/admin/users?page=${table.page}&sizePerPage=${table.rowsPerPage}&sortDirection=${table.order}&orderBy=${table.orderBy}`,{
         method: "GET",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       });
@@ -77,7 +77,7 @@ export function UserView() {
       }
       setLoading(false);
     }
-  }, [token, table.page, dispatch, page, table.rowsPerPage, table.order, filterName]);
+  }, [token, table.page, dispatch, page, table.rowsPerPage, table.order, filterName, table.orderBy]);
 
   useEffect(() => {
     fetchUsers();
@@ -101,10 +101,10 @@ export function UserView() {
           setFilterName={(val : string) => {
             if(val.length > 2){
               setFilterName(val);
-              table.onChangePage(null, 0);
+              table.onResetPage()
             }
           }}
-          rowsPerPage={table.rowsPerPage}
+          orderBy={table.orderBy}
         />
 
         <Scrollbar>

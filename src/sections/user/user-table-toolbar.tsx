@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 
 import Tooltip from '@mui/material/Tooltip';
 import Toolbar from '@mui/material/Toolbar';
@@ -8,7 +8,7 @@ import IconButton from '@mui/material/IconButton';
 import { useAppDispatch, useAppSelector } from 'src/routes/hooks/hookes';
 
 import { CONFIG } from 'src/config-global';
-import { setUsers } from 'src/features/users/usersSlice';
+import { setUsers, moreUsers } from 'src/features/users/usersSlice';
 
 import { Iconify } from 'src/components/iconify';
 
@@ -20,37 +20,43 @@ import DebounceInput from './view/DebounceInput';
 type UserTableToolbarProps = {
   numSelected: number;
   page: number;
-  rowsPerPage: number;
   setFilterName: (value: string) => void;
   filterName: string;
   setUserPages: (value: string) => void;
+  orderBy: string;
 };
 
-export function UserTableToolbar({ numSelected, page, rowsPerPage, setFilterName, filterName, setUserPages }: UserTableToolbarProps) {
+export function UserTableToolbar({ numSelected, page, setFilterName, filterName, setUserPages, orderBy }: UserTableToolbarProps) {
   const token = useAppSelector((state) => state.auth.token);
-  
+  const [pageCurrent, setPageCurrent] = useState(0);
   const dispatch = useAppDispatch();
 
   const fetchUsersByName = useCallback(async () => {
     console.log('Debounced value:', filterName);
-    if(filterName.length > 2){
-      
-      const response = await fetch(`${CONFIG.urlUsers}/admin/users/${filterName}?page=${page}&sizePerPage=${rowsPerPage}&sortDirection=ASC`,{
+    if(filterName.length > 2 && pageCurrent <= page ){
+      setPageCurrent(page)
+      const response = await fetch(`${CONFIG.urlUsers}/admin/users/${filterName}?page=${page}&sizePerPage=25&sortDirection=ASC&orderBy=${orderBy}`,{
         method: "GET",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       });
       if(response.status === 200){
-        const body = await response.json();      
-        dispatch(setUsers({ users: body.content}))
+        const body = await response.json();  
+        
+        if(body.first){
+          dispatch(setUsers({ users: body.content}))
+          setUserPages(body);
+        } else {
+          const newUsers = body.content;
+          dispatch(moreUsers({ users: newUsers }))
+        }
         console.log(body);
-        setUserPages(body);
       }
     }
-  }, [filterName, page, rowsPerPage, token, dispatch, setUserPages]);
+  }, [filterName, page, token, dispatch, setUserPages, orderBy, pageCurrent]);
 
   useEffect(() => {
     fetchUsersByName();
-  }, [fetchUsersByName])
+  }, [fetchUsersByName, page, orderBy])
 
   return (
     <Toolbar
