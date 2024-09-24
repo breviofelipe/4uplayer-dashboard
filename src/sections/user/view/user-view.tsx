@@ -51,14 +51,11 @@ export function UserView() {
     filterName,
   });
 
-  const notFound = !dataFiltered.length && !!filterName;
-
-
-  
-  
+  const notFound = !dataFiltered.length && !!filterName; 
 
   const fetchUsers = useCallback(async () => {
     if(filterName === '' && (page < table.page || table.page === 0)){
+      setLoading(true);
       setPage(table.page);
       const response = await fetch(`${CONFIG.urlUsers}/admin/users?page=${table.page}&sizePerPage=${table.rowsPerPage}&sortDirection=${table.order.toUpperCase()}&orderBy=${table.orderBy}`,{
         method: "GET",
@@ -92,21 +89,24 @@ export function UserView() {
         <FormModal />
       </Box>
 
-      <Card>
-        {!loading ? <><UserTableToolbar
+      <Card>        
+        <UserTableToolbar
+          setLoading={setLoading}
           setUserPages={setUserPages}
           filterName={filterName}
           numSelected={table.selected.length}
           page={table.page}
           setFilterName={(val : string) => {
-            if(val.length > 2){
               setFilterName(val);
               table.onResetPage()
-            }
           }}
+          
           orderBy={table.orderBy}
         />
-
+        { loading && <Box sx={{ width: '100%' }}>
+                        <LinearProgress/>
+                     </Box>
+        }
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
@@ -165,11 +165,8 @@ export function UserView() {
           onPageChange={table.onChangePage}
           rowsPerPageOptions={[5, 10, 25]}
           onRowsPerPageChange={table.onChangeRowsPerPage}
-        /></>:
-        <Box sx={{ width: '100%' }}>
-          <LinearProgress/>
-        </Box>
-        }
+        />
+               
       </Card>
     </DashboardContent>
   );

@@ -24,16 +24,17 @@ type UserTableToolbarProps = {
   filterName: string;
   setUserPages: (value: string) => void;
   orderBy: string;
+  setLoading: (value: boolean) => void;
 };
 
-export function UserTableToolbar({ numSelected, page, setFilterName, filterName, setUserPages, orderBy }: UserTableToolbarProps) {
+export function UserTableToolbar({ numSelected, page, setFilterName, filterName, setUserPages, orderBy, setLoading }: UserTableToolbarProps) {
   const token = useAppSelector((state) => state.auth.token);
   const [pageCurrent, setPageCurrent] = useState(0);
   const dispatch = useAppDispatch();
 
   const fetchUsersByName = useCallback(async () => {
-    console.log('Debounced value:', filterName);
     if(filterName.length > 2 && pageCurrent <= page ){
+      setLoading(true);
       setPageCurrent(page)
       const response = await fetch(`${CONFIG.urlUsers}/admin/users/${filterName}?page=${page}&sizePerPage=25&sortDirection=ASC&orderBy=${orderBy}`,{
         method: "GET",
@@ -49,10 +50,10 @@ export function UserTableToolbar({ numSelected, page, setFilterName, filterName,
           const newUsers = body.content;
           dispatch(moreUsers({ users: newUsers }))
         }
-        console.log(body);
+        setLoading(false);
       }
     }
-  }, [filterName, page, token, dispatch, setUserPages, orderBy, pageCurrent]);
+  }, [filterName, page, token, dispatch, setUserPages, orderBy, pageCurrent, setLoading]);
 
   useEffect(() => {
     fetchUsersByName();
