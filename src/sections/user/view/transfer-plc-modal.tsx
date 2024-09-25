@@ -1,8 +1,10 @@
 import { useState } from "react";
 
-import { Alert, Button, Dialog, TextField, DialogTitle, DialogActions, DialogContent, DialogContentText, RadioGroup, FormControl, FormLabel, FormControlLabel, Radio } from "@mui/material";
+import { Alert, Radio, Button, Dialog, TextField, FormLabel, RadioGroup, Typography, DialogTitle, FormControl, DialogActions, DialogContent, FormControlLabel, DialogContentText } from "@mui/material";
 
 import { CONFIG } from "src/config-global";
+
+import LoadingComponent from "src/components/loading/Loading";
 
 
 interface NewCofuderProps {
@@ -15,6 +17,7 @@ export default function TransferPLCModal  ({ email, token } : NewCofuderProps) {
 
     const [open, setOpen] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [isLoading, setLoading] = useState<boolean>(false);
     const [amountStack, setAmountStake] = useState('');
     const [transaction, setTransaction] = useState('TRANSFER');
 
@@ -75,8 +78,9 @@ export default function TransferPLCModal  ({ email, token } : NewCofuderProps) {
             <RadioButtonsGroupType />
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose}>Cancelar</Button>
-            <Button onClick={async () => {
+            
+            <Button disabled={isLoading} onClick={async () => {
+              setLoading(true);
               const request = {
                 toEmail : email,
                 amount: amountStack,
@@ -91,12 +95,13 @@ export default function TransferPLCModal  ({ email, token } : NewCofuderProps) {
               if(response.status === 200){
                 setSuccess(true);
               } else {
-                alert("Erro ao enviar transação, entre em contato com o suporte.")
+                alert("Erro ao enviar transação, entre em contato com o suporte.");
               }
-
+              setLoading(false);
             }} >
-              Enviar
+              {isLoading ? <LoadingComponent/> : <Typography>Enviar</Typography>}
             </Button>
+            <Button disabled={isLoading} onClick={handleClose}>Cancelar</Button>
           </DialogActions>
     </Dialog>
     </>

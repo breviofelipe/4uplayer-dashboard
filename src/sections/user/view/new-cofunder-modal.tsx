@@ -1,8 +1,10 @@
 import { useState } from "react";
 
-import { Alert, Button, Dialog, TextField, DialogTitle, DialogActions, DialogContent, DialogContentText } from "@mui/material";
+import { Alert , Button, Dialog, TextField, Typography, DialogTitle, DialogActions, DialogContent, DialogContentText } from "@mui/material";
 
 import { CONFIG } from "src/config-global";
+
+import LoadingComponent from "src/components/loading/Loading";
 
 
 interface NewCofuderProps {
@@ -16,6 +18,7 @@ export default function NewCofunderModal  ({ email, token } : NewCofuderProps) {
     const [open, setOpen] = useState(false);
     const [success, setSuccess] = useState(false);
     const [amountStack, setAmountStake] = useState('');
+    const [isLoading, setLoading] = useState<boolean>(false);
 
         const handleClose = () => {
             setSuccess(false);
@@ -50,8 +53,8 @@ export default function NewCofunderModal  ({ email, token } : NewCofuderProps) {
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose}>Cancelar</Button>
             <Button onClick={async () => {
+              setLoading(true);
               const request = {
                 email,
                 amountStake: amountStack
@@ -67,10 +70,11 @@ export default function NewCofunderModal  ({ email, token } : NewCofuderProps) {
               } else {
                 alert("Erro ao enviar transação, entre em contato com o suporte.")
               }
-
+              setLoading(false);
             }} >
-              Enviar
+              {isLoading ? <LoadingComponent /> : <Typography>Enviar</Typography>}
             </Button>
+            <Button disabled={isLoading} onClick={handleClose}>Cancelar</Button>
           </DialogActions>
     </Dialog>
     </>
