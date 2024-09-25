@@ -12,7 +12,7 @@ interface DebounceInputProps {
 
 const DebounceInput: React.FC<DebounceInputProps> = ({
   onDebouncedChange,
-  placeholder = 'Type here...',
+  placeholder = 'Search user here...',
   debounceTime = 1369
 }) => {
   const [inputValue, setInputValue] = useState<string>('');
