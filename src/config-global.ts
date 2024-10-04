@@ -18,6 +18,5 @@ export const CONFIG: ConfigValue = {
   urlLogin: 'https://guarded-earth-81521-8a63ef2fadd3.herokuapp.com',
   urlUsers: 'https://aqueous-atoll-06718-98ee250592fd.herokuapp.com',
   urlNotifications: 'https://desolate-gorge-99763-7ff4ee81f256.herokuapp.com' 
-
 };
 
