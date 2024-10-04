@@ -12,7 +12,7 @@ import { setUsers, moreUsers } from 'src/features/users/usersSlice';
 
 import { Iconify } from 'src/components/iconify';
 
-import DebounceInput from './view/DebounceInput';
+import DebounceInput from '../../components/debounce-input/DebounceInput';
 
 
 // ----------------------------------------------------------------------

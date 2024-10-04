@@ -87,7 +87,10 @@ export function TransferView() {
         <Typography variant="h4" flexGrow={1}>
           Transfers
         </Typography>
-        <Button>Refresh</Button>
+        <Button onClick={() => {
+          table.onResetPage();
+          fetchTransfers();
+        }}>Refresh</Button>
       </Box>
 
       <Card>        
