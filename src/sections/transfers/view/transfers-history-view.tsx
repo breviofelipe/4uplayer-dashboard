@@ -14,10 +14,9 @@ import { useAppDispatch, useAppSelector } from 'src/routes/hooks/hookes';
 
 import { CONFIG } from 'src/config-global';
 import { DashboardContent } from 'src/layouts/dashboard';
-
+import { setHistories, moreHistories } from 'src/features/transfers/transfersSlice';
 
 import { Scrollbar } from 'src/components/scrollbar';
-import { moreHistories, setHistories } from 'src/features/transfers/transfersSlice';
 
 import { TableNoData } from '../table-no-data';
 import { TableEmptyRows } from '../table-empty-rows';
