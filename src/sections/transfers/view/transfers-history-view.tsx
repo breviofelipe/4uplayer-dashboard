@@ -103,8 +103,6 @@ export function TransferView() {
               setFilterName(val);
               table.onResetPage()
           }}
-          
-          orderBy={table.orderBy}
         />
         { loading && <Box sx={{ width: '100%' }}>
                         <LinearProgress/>

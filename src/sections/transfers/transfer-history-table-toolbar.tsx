@@ -8,7 +8,7 @@ import IconButton from '@mui/material/IconButton';
 import { useAppDispatch, useAppSelector } from 'src/routes/hooks/hookes';
 
 import { CONFIG } from 'src/config-global';
-import { setUsers, moreUsers } from 'src/features/users/usersSlice';
+import { setHistories, moreHistories } from 'src/features/transfers/transfersSlice';
 
 import { Iconify } from 'src/components/iconify';
 
@@ -23,20 +23,22 @@ type TransfersHistoryTableToolbarProps = {
   setFilterName: (value: string) => void;
   filterName: string;
   setPages: (value: string) => void;
-  orderBy: string;
   setLoading: (value: boolean) => void;
 };
 
-export function TransfersHistoryTableToolbar({ numSelected, page, setFilterName, filterName, setPages, orderBy, setLoading }: TransfersHistoryTableToolbarProps) {
+export function TransfersHistoryTableToolbar({ numSelected, page, setFilterName, filterName, setPages, setLoading }: TransfersHistoryTableToolbarProps) {
   const token = useAppSelector((state) => state.auth.token);
   const [pageCurrent, setPageCurrent] = useState(0);
   const dispatch = useAppDispatch();
-
+  function validarEmail(email: string): boolean {
+    const emailRegex = /^[\w-\\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+    return emailRegex.test(email);
+}
   const fetchUsersByName = useCallback(async () => {
-    if(filterName.length > 2 && pageCurrent <= page ){
+    if(validarEmail(filterName) && pageCurrent <= page ){
       setLoading(true);
       setPageCurrent(page)
-      const response = await fetch(`${CONFIG.urlUsers}/admin/users/${filterName}?page=${page}&sizePerPage=25&sortDirection=ASC&orderBy=${orderBy}`,{
+      const response = await fetch(`${CONFIG.urlNotifications}/wallet/search-history-admin?email=${filterName}&page=${page}&sizePerPage=25&sortDirection=ASC`,{
         method: "GET",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       });
@@ -44,20 +46,20 @@ export function TransfersHistoryTableToolbar({ numSelected, page, setFilterName,
         const body = await response.json();  
         
         if(body.first){
-          dispatch(setUsers({ users: body.content}))
+          dispatch(setHistories({ histories: body.content}))
           setPages(body);
         } else {
-          const newUsers = body.content;
-          dispatch(moreUsers({ users: newUsers }))
+          const news = body.content;
+          dispatch(moreHistories({ histories: news }))
         }
-        setLoading(false);
       }
+      setLoading(false);
     }
-  }, [filterName, page, token, dispatch, setPages, orderBy, pageCurrent, setLoading]);
+  }, [filterName, page, token, dispatch, setPages, pageCurrent, setLoading]);
 
   useEffect(() => {
     fetchUsersByName();
-  }, [fetchUsersByName, page, orderBy])
+  }, [fetchUsersByName, page])
 
   return (
     <Toolbar

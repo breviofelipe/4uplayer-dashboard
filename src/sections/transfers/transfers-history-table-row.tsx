@@ -13,6 +13,7 @@ import TransactionModal from "./view/transfer-detail";
 export interface History {
   id: string;
   firstName: string;
+  email: string;
   picturePath: string;
   from: string;
   to: string;
