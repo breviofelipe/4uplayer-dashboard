@@ -71,11 +71,11 @@ export function applyFilter({ inputData, comparator, filterName }: ApplyFilterPr
 
   inputData = stabilizedThis.map((el) => el[0]);
 
-  if (filterName) {
-    inputData = inputData.filter(
-      (history) => history.email?.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
-    );
-  }
+  // if (filterName) {
+  //   inputData = inputData.filter(
+  //     (history) => history.email?.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+  //   );
+  // }
 
   return inputData;
 }
