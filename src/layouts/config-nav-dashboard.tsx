@@ -1,3 +1,4 @@
+import { Icon } from '@iconify/react';
 import { Label } from 'src/components/label';
 import { SvgColor } from 'src/components/svg-color';
 
@@ -39,9 +40,9 @@ export const navData = [
     ),
   },
   {
-    title: 'Blog',
+    title: 'Posts',
     path: '/blog',
-    icon: icon('ic-blog'),
+    icon: <Icon icon="iconoir:post" width="24" height="24" />,
     info: (
       <Label color="info" variant="inverted">
         +7

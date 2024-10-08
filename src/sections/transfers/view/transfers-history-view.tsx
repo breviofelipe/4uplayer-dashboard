@@ -16,6 +16,7 @@ import { CONFIG } from 'src/config-global';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { setHistories, moreHistories } from 'src/features/transfers/transfersSlice';
 
+import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
 import { TableNoData } from '../table-no-data';
@@ -86,7 +87,10 @@ export function TransferView() {
         <Typography variant="h4" flexGrow={1}>
           Transfers
         </Typography>
-        <Button onClick={() => {
+        <Button variant="contained"
+          color="inherit"
+          startIcon={<Iconify icon="solar:refresh-bold" />}
+          onClick={() => {
           table.onResetPage();
           fetchTransfers();
         }}>Refresh</Button>
