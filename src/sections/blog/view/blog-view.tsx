@@ -23,13 +23,13 @@ import { PostsResponse } from './posts-response';
 
 export function BlogView() {
   const [loading, setLoading] = useState(true);
-  const [sortBy, setSortBy] = useState('latest');
+  const [sortBy, setSortBy] = useState('reported');
   const [page, setPage] = useState(0);
   const token = useAppSelector((state) => state.auth.token);
   const [postsResponse, setPostsResponse] = useState<PostsResponse>();
   const fetchPosts = useCallback(async () => {
-   
-      const response = await fetch(`${CONFIG.urlPosts}/posts/admin?page=${page}`,{
+      setLoading(true);
+      const response = await fetch(`${CONFIG.urlPosts}/posts/admin?page=${page}&sortBy=${sortBy}`,{
         method: "GET",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       });
@@ -42,7 +42,7 @@ export function BlogView() {
   
       setLoading(false);
     }
-  ,[token, page]);
+  ,[token, page, sortBy]);
 
   useEffect(() => {
     fetchPosts();
@@ -69,36 +69,27 @@ export function BlogView() {
 
       <Box display="flex" alignItems="center" justifyContent="space-between" sx={{ mb: 5 }}>
         <PostSearch posts={_posts} />
-        { loading && <Box sx={{ width: '100%' }}>
-                        <LinearProgress />
-                     </Box>
-        }
+        
         <PostSort
           sortBy={sortBy}
           onSort={handleSort}
           options={[
             { value: 'latest', label: 'Latest' },
-            { value: 'popular', label: 'Popular' },
+            { value: 'reported', label: 'Reported' },
             { value: 'oldest', label: 'Oldest' },
           ]}
         />
       </Box>
-
+      { loading && <Box sx={{ width: '100%', marginBottom: '2rem' }}>
+                        <LinearProgress />
+                     </Box>
+        }
       <Grid container spacing={3}>
-        {/* {_posts.map((post, index) => {
-          const latestPostLarge = index === 0;
-          const latestPost = index === 1 || index === 2;
-
-          return (
-            <Grid key={post.id} xs={12} sm={latestPostLarge ? 12 : 6} md={latestPostLarge ? 6 : 3}>
-              <PostItem post={post} latestPost={latestPost} latestPostLarge={latestPostLarge} />
-            </Grid>
-          );
-        })} */}
-
         {postsResponse && postsResponse.content.map((postResponse, index) => {
                   const latestPostLarge = index === 0;
                   const latestPost = index === 1 || index === 2;
+                  const likes = postResponse.likes;
+                  const likeCount = Object.keys(likes).length;
                   const post = {
                     id: postResponse.id,
                     title: postResponse.description,
@@ -107,7 +98,7 @@ export function BlogView() {
                     description: postResponse.description,
                     totalShares: 150,
                     totalComments: postResponse.comments.length,
-                    totalFavorites: 70,
+                    totalFavorites: 1500,
                     postedAt: postResponse.createdAt,
                     author: {
                       name: postResponse.firstName,

@@ -93,7 +93,7 @@ export function PostItem({
     >
       {[
         { number: post.totalComments, icon: 'solar:chat-round-dots-bold' },
-        { number: post.totalViews, icon: 'solar:eye-bold' },
+        { number: post.totalFavorites, icon: 'solar:heart-bold' },
         { number: post.totalShares, icon: 'solar:share-bold' },
       ].map((info, _index) => (
         <Box
