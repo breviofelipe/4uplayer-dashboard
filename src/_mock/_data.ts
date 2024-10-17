@@ -55,6 +55,7 @@ export const _posts = [...Array(23)].map((_, index) => ({
   totalShares: 8556,
   totalFavorites: 8870,
   postedAt: _times(index),
+  twitchEmbedId: null,
   author: {
     name: _fullName(index),
     avatarUrl: `/assets/images/avatar/avatar-${index + 1}.webp`,

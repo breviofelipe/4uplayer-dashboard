@@ -1,23 +1,25 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import { LinearProgress } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 import Pagination from '@mui/material/Pagination';
 
+import { useAppSelector } from 'src/routes/hooks/hookes';
+
 import { _posts } from 'src/_mock';
+import { CONFIG } from 'src/config-global';
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { Iconify } from 'src/components/iconify';
-import { useAppSelector } from 'src/routes/hooks/hookes';
-import { CONFIG } from 'src/config-global';
-import { LinearProgress } from '@mui/material';
 
 import { PostItem } from '../post-item';
 import { PostSort } from '../post-sort';
 import { PostSearch } from '../post-search';
-import { PostsResponse } from './posts-response';
+
+import type { PostsResponse } from './posts-response';
 
 // ----------------------------------------------------------------------
 
@@ -35,8 +37,6 @@ export function BlogView() {
       });
       if(response.status === 200){
         const body = await response.json();
-       
-          console.log(body);
           setPostsResponse(body);
        }
   
@@ -88,7 +88,7 @@ export function BlogView() {
         {postsResponse && postsResponse.content.map((postResponse, index) => {
                   const latestPostLarge = index === 0;
                   const latestPost = index === 1 || index === 2;
-                  const likes = postResponse.likes;
+                  const {likes} = postResponse;
                   const likeCount = Object.keys(likes).length;
                   const post = {
                     id: postResponse.id,
@@ -98,8 +98,9 @@ export function BlogView() {
                     description: postResponse.description,
                     totalShares: 150,
                     totalComments: postResponse.comments.length,
-                    totalFavorites: 1500,
+                    totalFavorites: likeCount,
                     postedAt: postResponse.createdAt,
+                    twitchEmbedId: postResponse.twitchEmbedId,
                     author: {
                       name: postResponse.firstName,
                       avatarUrl: postResponse.userPicturePath

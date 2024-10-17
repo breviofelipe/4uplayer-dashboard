@@ -10,6 +10,7 @@ import { fDate } from 'src/utils/format-time';
 import { fShortenNumber } from 'src/utils/format-number';
 
 import { varAlpha } from 'src/theme/styles';
+import TwitchEmbed from 'src/layouts/components/twitch/TwitchEmbed';
 
 import { Iconify } from 'src/components/iconify';
 import { SvgColor } from 'src/components/svg-color';
@@ -19,13 +20,14 @@ import { SvgColor } from 'src/components/svg-color';
 export type PostItemProps = {
   id: string;
   title: string;
-  coverUrl: string;
+  coverUrl: string | null;
   totalViews: number;
   description: string;
   totalShares: number;
   totalComments: number;
   totalFavorites: number;
   postedAt: string | number | null;
+  twitchEmbedId: string | null;
   author: {
     name: string;
     avatarUrl: string;
@@ -80,6 +82,10 @@ export function PostItem({
     </Link>
   );
 
+  const renderTwitch = (
+    <>{post.twitchEmbedId && <TwitchEmbed embedId={post.twitchEmbedId}/>}</>
+  );
+
   const renderInfo = (
     <Box
       gap={1.5}
@@ -114,7 +120,7 @@ export function PostItem({
   );
 
   const renderCover = (
-    <Box
+    <>{post.coverUrl && <Box
       component="img"
       alt={post.title}
       src={post.coverUrl}
@@ -125,7 +131,7 @@ export function PostItem({
         objectFit: 'cover',
         position: 'absolute',
       }}
-    />
+    />}</>
   );
 
   const renderDate = (
@@ -189,6 +195,7 @@ export function PostItem({
         {renderShape}
         {renderAvatar}
         {renderCover}
+        {/* {renderTwitch} */}
       </Box>
 
       <Box
@@ -204,6 +211,7 @@ export function PostItem({
         {renderDate}
         {renderTitle}
         {renderInfo}
+        
       </Box>
     </Card>
   );
