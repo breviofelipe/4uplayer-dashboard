@@ -51,7 +51,7 @@ export function BlogView() {
   const handleSort = useCallback((newSort: string) => {
     setSortBy(newSort);
   }, []);
-
+ 
   return (
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
@@ -109,7 +109,7 @@ export function BlogView() {
                   }
                   return (
                     <Grid key={post.id} xs={12} sm={latestPostLarge ? 12 : 6} md={latestPostLarge ? 6 : 3}>
-                      <PostItem post={post} latestPost={latestPost} latestPostLarge={latestPostLarge} />
+                      <PostItem fetchPosts={fetchPosts} post={post} latestPost={latestPost} latestPostLarge={latestPostLarge} />
                     </Grid>
                   );
                 })}

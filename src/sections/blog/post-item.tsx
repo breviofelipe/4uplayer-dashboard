@@ -14,6 +14,9 @@ import TwitchEmbed from 'src/layouts/components/twitch/TwitchEmbed';
 
 import { Iconify } from 'src/components/iconify';
 import { SvgColor } from 'src/components/svg-color';
+import { CONFIG } from 'src/config-global';
+import { useAppSelector } from 'src/routes/hooks/hookes';
+import { IconButton } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -40,11 +43,13 @@ export function PostItem({
   post,
   latestPost,
   latestPostLarge,
+  fetchPosts,
   ...other
 }: CardProps & {
   post: PostItemProps;
   latestPost: boolean;
   latestPostLarge: boolean;
+  fetchPosts: () => void;
 }) {
   const renderAvatar = (
     <Avatar
@@ -86,6 +91,19 @@ export function PostItem({
   const renderTwitch = (
     <>{post.twitchEmbedId && <TwitchEmbed embedId={post.twitchEmbedId}/>}</>
   );
+  const token = useAppSelector((state) => state.auth.token);
+  const deletePost = async () => {
+    const response = await fetch(`${CONFIG.urlPosts}/posts/${post.id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      }
+    });
+    if(response.ok){
+      fetchPosts();
+    }
+  }
 
   const renderInfo = (
     <Box
@@ -98,6 +116,7 @@ export function PostItem({
         color: 'text.disabled',
       }}
     >
+      
       {[
         { number: post.totalComments, icon: 'solar:chat-round-dots-bold' },
         { number: post.totalFavorites, icon: 'solar:heart-bold' },
@@ -211,7 +230,12 @@ export function PostItem({
         {renderDate}
         {renderTitle}
         {renderInfo}
-        
+        <Box mt='1rem' flexDirection='row' display='flex' justifyContent='center'>
+          <IconButton onClick={deletePost}>
+            <Iconify sx={{color: 'error.main', marginRight: 0.5}} width={18} icon="solar:trash-bin-trash-bold"/>
+          </IconButton>
+        </Box>
+  
       </Box>
     </Card>
   );
