@@ -7,7 +7,7 @@ export type TwitchEmbedProps = {
   };
 
   function TwitchEmbed ( { embedId }: TwitchEmbedProps ) {
-  const domain = 'localhost';
+  const domain = '4uplayer-dashboard.vercel.app';
   
     const renderTwitch = (
       <Box
