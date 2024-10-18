@@ -17,6 +17,7 @@ interface Content {
     createdAt: string;
     youtubeEmbedId: string | null;
     twitchEmbedId: string | null;
+    reports: [];
 }
 
 interface Sort {

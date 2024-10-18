@@ -28,6 +28,7 @@ export type PostItemProps = {
   totalFavorites: number;
   postedAt: string | number | null;
   twitchEmbedId: string | null;
+  reports: string[];
   author: {
     name: string;
     avatarUrl: string;
@@ -100,7 +101,7 @@ export function PostItem({
       {[
         { number: post.totalComments, icon: 'solar:chat-round-dots-bold' },
         { number: post.totalFavorites, icon: 'solar:heart-bold' },
-        { number: post.totalShares, icon: 'solar:share-bold' },
+        { number: post.reports.length, icon: 'material-symbols:partner-reports' },
       ].map((info, _index) => (
         <Box
           key={_index}

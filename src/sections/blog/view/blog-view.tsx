@@ -101,6 +101,7 @@ export function BlogView() {
                     totalFavorites: likeCount,
                     postedAt: postResponse.createdAt,
                     twitchEmbedId: postResponse.twitchEmbedId,
+                    reports: postResponse.reports,
                     author: {
                       name: postResponse.firstName,
                       avatarUrl: postResponse.userPicturePath
