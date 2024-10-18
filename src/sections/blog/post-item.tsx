@@ -20,7 +20,7 @@ import { SvgColor } from 'src/components/svg-color';
 export type PostItemProps = {
   id: string;
   title: string;
-  coverUrl: string | null;
+  coverUrl: string;
   totalViews: number;
   description: string;
   totalShares: number;
@@ -120,7 +120,7 @@ export function PostItem({
   );
 
   const renderCover = (
-    <>{post.coverUrl && <Box
+    <Box
       component="img"
       alt={post.title}
       src={post.coverUrl}
@@ -131,7 +131,7 @@ export function PostItem({
         objectFit: 'cover',
         position: 'absolute',
       }}
-    />}</>
+    />
   );
 
   const renderDate = (
@@ -194,8 +194,7 @@ export function PostItem({
       >
         {renderShape}
         {renderAvatar}
-        {renderCover}
-        {/* {renderTwitch} */}
+        {post.twitchEmbedId ? renderTwitch : renderCover}
       </Box>
 
       <Box

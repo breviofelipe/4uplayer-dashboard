@@ -86,8 +86,8 @@ export function BlogView() {
         }
       <Grid container spacing={3}>
         {postsResponse && postsResponse.content.map((postResponse, index) => {
-                  const latestPostLarge = index === 0;
-                  const latestPost = index === 1 || index === 2;
+                  const latestPostLarge = (index === 0) && !postResponse.twitchEmbedId;
+                  const latestPost = (index === 1 || index === 2) && !postResponse.twitchEmbedId;
                   const {likes} = postResponse;
                   const likeCount = Object.keys(likes).length;
                   const post = {
