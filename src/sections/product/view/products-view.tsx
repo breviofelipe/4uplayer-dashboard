@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 
-import Box from '@mui/material/Box';
+import { Box } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import Pagination from '@mui/material/Pagination';
 import Typography from '@mui/material/Typography';
@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import { _products } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
 
+import UploadForm from './upload-ads-form';
 import { ProductItem } from '../product-item';
 import { ProductSort } from '../product-sort';
 import { CartIcon } from '../product-cart-widget';
@@ -84,14 +85,26 @@ export function ProductsView() {
     (key) => filters[key as keyof FiltersProps] !== defaultFilters[key as keyof FiltersProps]
   );
 
+  
+  const handleUpload = (file: File, description: string) => {
+    // Aqui você pode implementar a lógica para enviar o arquivo e a descrição para o servidor
+    console.log('Arquivo:', file);
+    console.log('Descrição:', description);
+    // Exemplo: enviar para uma API
+    // const formData = new FormData();
+    // formData.append('file', file);
+    // formData.append('description', description);
+    // fetch('/api/upload', { method: 'POST', body: formData });
+  };
   return (
     <DashboardContent>
       <Typography variant="h4" sx={{ mb: 5 }}>
         Products
       </Typography>
-
+      
+      
       <CartIcon totalItems={8} />
-
+      <UploadForm onSubmit={handleUpload} />
       <Box
         display="flex"
         alignItems="center"
@@ -140,5 +153,6 @@ export function ProductsView() {
 
       <Pagination count={10} color="primary" sx={{ mt: 8, mx: 'auto' }} />
     </DashboardContent>
+    
   );
 }

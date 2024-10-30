@@ -1,6 +1,7 @@
 
-import { Box } from "@mui/material";
 import "./TwitchEmbed.css";
+
+import { Box } from "@mui/material";
 
 export type TwitchEmbedProps = {
     embedId: string;
