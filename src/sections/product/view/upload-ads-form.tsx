@@ -11,6 +11,7 @@ import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 
 import FileDropzone from './file-drop';
+import { CONFIG } from 'src/config-global';
 
 interface UploadFormProps {
   onSubmit: (file: File, description: string) => void;
@@ -35,12 +36,10 @@ const UploadForm: React.FC<UploadFormProps> = ({ onSubmit }) => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (file && description.trim()) {
-      
-        // CONFIG.urlPosts
     const body = {
         imageBase64: image, description
     }
-    const url = "http://localhost:5000"
+    const url = CONFIG.urlPosts;
     const response = await fetch(`${url}/ads`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
