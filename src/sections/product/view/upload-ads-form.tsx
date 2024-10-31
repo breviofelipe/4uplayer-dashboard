@@ -1,8 +1,11 @@
 import type { FormEvent, ChangeEvent } from 'react';
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { Box, Button, Dialog, DialogContent, TextField } from '@mui/material';
+import { Box, Button, Dialog, TextField, DialogContent, Alert } from '@mui/material';
+
+import { useAppSelector } from 'src/routes/hooks/hookes';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
@@ -18,33 +21,34 @@ interface FileDropzoneProps {
   }
 const UploadForm: React.FC<UploadFormProps> = ({ onSubmit }) => {
   const [file, setFile] = useState<File | null>(null);
+  const [image, setImage] = useState<string | ArrayBuffer | null>(null);
   const [description, setDescription] = useState<string>('');
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const token = useAppSelector((state) => state.auth.token);
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const selectedFile = e.target.files[0];
-      if (selectedFile.type.startsWith('image/')) {
-        setFile(selectedFile);
-        setPreviewUrl(URL.createObjectURL(selectedFile));
-        setError(null);
-      } else {
-        setError('Por favor, selecione um arquivo de imagem válido.');
-        setFile(null);
-        setPreviewUrl(null);
-      }
-    }
-  };
-
+ 
   const handleDescriptionChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setDescription(e.target.value);
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (file && description.trim()) {
-      onSubmit(file, description);
+      
+        // CONFIG.urlPosts
+    const body = {
+        imageBase64: image, description
+    }
+    const url = "http://localhost:5000"
+    const response = await fetch(`${url}/ads`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify(body),
+      });
+     if(response.ok){
+        handleCloseModal();
+     }
       setFile(null);
       setDescription('');
       setPreviewUrl(null);
@@ -61,10 +65,36 @@ const UploadForm: React.FC<UploadFormProps> = ({ onSubmit }) => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
-  const [image, setImage] = useState(null);
+  const navigate = useNavigate();
   const handleFilesAccepted = (files: File[]) => {
+    
+        
+        
+
     console.log('Arquivos aceitos:', files);
-    // Aqui você pode processar os arquivos como necessário
+    const reader = new FileReader();
+   reader.readAsDataURL(files[0]);
+   reader.onload = async function () {
+     // TODO fetch
+
+     const selectedFile = files[0];
+
+     
+     if (selectedFile.type.startsWith('image/')) {
+        setImage(reader.result)
+        setFile(selectedFile);
+        setPreviewUrl(URL.createObjectURL(selectedFile));
+        setError(null);
+      } else {
+        setError('Por favor, selecione um arquivo de imagem válido.');
+        setFile(null);
+        setPreviewUrl(null);
+      }
+
+   };
+   reader.onerror = function (errorReader) {
+     console.log('Error: ', errorReader);
+    };
   };
   
   return <><Button
@@ -92,7 +122,7 @@ const UploadForm: React.FC<UploadFormProps> = ({ onSubmit }) => {
         <img src={previewUrl} alt="Preview" className="max-w-full h-auto rounded-lg" />
         </div>
     )}
-    <Box display='flex' flexDirection='column' >
+    <Box mt='0.5rem' display='flex' flexDirection='column' >
         <Label mb='0.5rem'>
             Descrição
         </Label>

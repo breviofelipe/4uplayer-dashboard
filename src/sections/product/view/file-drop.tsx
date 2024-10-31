@@ -1,6 +1,7 @@
-import { Box } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
+
+import { Box } from '@mui/material';
 
 interface FileDropzoneProps {
   onFilesAccepted: (files: File[]) => void;
