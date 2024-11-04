@@ -3,15 +3,16 @@ import type { FormEvent, ChangeEvent } from 'react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Box, Button, Dialog, TextField, DialogContent, Alert } from '@mui/material';
+import { Box, Button, Dialog, TextField, DialogContent } from '@mui/material';
 
 import { useAppSelector } from 'src/routes/hooks/hookes';
+
+import { CONFIG } from 'src/config-global';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 
 import FileDropzone from './file-drop';
-import { CONFIG } from 'src/config-global';
 
 interface UploadFormProps {
   onSubmit: (file: File, description: string) => void;
