@@ -16,6 +16,11 @@ export const navData = [
     icon: icon('ic-analytics'),
   },
   {
+    title: 'Anúncios',
+    path: '/ads',
+    icon: <Icon icon="mdi:ads" width="24" height="24" />
+  },
+  {
     title: 'Users',
     path: '/user',
     icon: icon('ic-user'),
