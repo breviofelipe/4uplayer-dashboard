@@ -43,7 +43,6 @@ export function AdsView() {
       });
     if(response.ok){
         const body = await response.json();
-        console.log(body);
         setAds(body);
 
     }

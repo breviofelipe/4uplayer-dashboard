@@ -37,7 +37,7 @@ export default function CampaignSegmentationForm({ handleCloseModal } : Campaign
   const [file, setFile] = useState<File | null>(null);
   const [image, setImage] = useState<string | ArrayBuffer | null>(null);
   const [description, setDescription] = useState<string>('');
-  const [position, setPosition] = useState<string>('');
+  const [link, setLink] = useState<string>('');
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const token = useAppSelector((state) => state.auth.token);
@@ -73,6 +73,10 @@ export default function CampaignSegmentationForm({ handleCloseModal } : Campaign
       setDescription(e.target.value);
     };
 
+    const handleLinkChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+      setLink(e.target.value);
+    };
+
   const [formData, setFormData] = useState({
     // Initialize your form state here
     position: '',
@@ -85,8 +89,8 @@ export default function CampaignSegmentationForm({ handleCloseModal } : Campaign
     gameGenres: [],
     platforms: [],
     interests: [],
-    specificGames: [],
-    brands: [],
+    specificGames: '',
+    brands: '',
     engagementLevel: '',
     contentType: [],
     purchaseHistory: false,
@@ -123,14 +127,13 @@ export default function CampaignSegmentationForm({ handleCloseModal } : Campaign
   };
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
-    event.preventDefault();
-    console.log(formData);
-    
+    event.preventDefault();   
 
-    if (file && description.trim()) {
+    if (formData.position && file && description.trim() && link.trim()) {
       const body = {
           imageBase64: image,
           description,
+          link,
           position: formData.position,
           campaignSegmentation: formData
       }
@@ -148,7 +151,7 @@ export default function CampaignSegmentationForm({ handleCloseModal } : Campaign
         setDescription('');
         setPreviewUrl(null);
       } else {
-        setError('Por favor, selecione uma imagem e forneça uma descrição.');
+        setError('Por favor, selecione a possição do anúncio, uma imagem, uma descrição e um link');
       }
   };
 
@@ -193,6 +196,20 @@ export default function CampaignSegmentationForm({ handleCloseModal } : Campaign
             placeholder="Digite uma pequena descrição para a anuncio..."
         />
     </Box>
+    <Box mt='0.5rem' display='flex' flexDirection='column' >
+        <Label mb='0.5rem'>
+            Link do anúncio
+        </Label>
+        
+        <TextField
+            id="link"
+            fullWidth
+            value={link}
+            onChange={handleLinkChange}
+            placeholder="Link do anuncio"
+        />
+    </Box>
+    {error && <Typography color='error'>{error}</Typography>}
     <Box mt='0.5rem' display='flex' flexDirection='column' >
         <Label mb='0.5rem'>
           Detalhes Campanha Segmentada.
@@ -683,15 +700,14 @@ export default function CampaignSegmentationForm({ handleCloseModal } : Campaign
 
       <Box mt={2}>
         <Button onClick={handleSubmit} variant="contained" color="primary">
-          Enviar NEW
+          Enviar
         </Button>
       </Box>
 
     </Box>
 
-      {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-    
-      </form>
+      
+    </form>
   );
 }
 
