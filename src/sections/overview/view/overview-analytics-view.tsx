@@ -1,9 +1,13 @@
+
+import { useState, useEffect } from 'react';
+
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 
 import { selectUser } from 'src/routes/hooks/selectors';
 import { useAppSelector } from 'src/routes/hooks/hookes';
 
+import { CONFIG } from 'src/config-global';
 import { _tasks, _posts, _timeline } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
 
@@ -21,6 +25,177 @@ import { AnalyticsConversionRates } from '../analytics-conversion-rates';
 
 export function OverviewAnalyticsView() {
   const user = useAppSelector(selectUser);
+
+  const data = {
+    "groupedData": [
+      {
+        "_id": {
+          "year": 2023,
+          "month": 12
+        },
+        "total": 2,
+        "users": [
+          "65a1c6d5fc3ed628b199b4a5"
+        ]
+      },
+      {
+        "_id": {
+          "year": 2024,
+          "month": 2
+        },
+        "total": 183,
+        "users": [
+          "65a1c6d5fc3ed628b199b4a5"
+        ]
+      },
+      {
+        "_id": {
+          "year": 2024,
+          "month": 3
+        },
+        "total": 13,
+        "users": [
+          "65a1c6d5fc3ed628b199b4a5"
+        ]
+      },
+      {
+        "_id": {
+          "year": 2024,
+          "month": 4
+        },
+        "total": 21,
+        "users": [
+          "65a1c6d5fc3ed628b199b4a5"
+        ]
+      },
+      {
+        "_id": {
+          "year": 2024,
+          "month": 5
+        },
+        "total": 25,
+        "users": [
+          "65a1c6d5fc3ed628b199b4a5"
+        ]
+      },
+      {
+        "_id": {
+          "year": 2024,
+          "month": 6
+        },
+        "total": 7,
+        "users": [
+          "65a1c6d5fc3ed628b199b4a5"
+        ]
+      },
+      {
+        "_id": {
+          "year": 2024,
+          "month": 7
+        },
+        "total": 6,
+        "users": [
+          "65a1c6d5fc3ed628b199b4a5"
+        ]
+      },
+      {
+        "_id": {
+          "year": 2024,
+          "month": 8
+        },
+        "total": 113,
+        "users": [
+          "65a1c6d5fc3ed628b199b4a5"
+        ]
+      },
+      {
+        "_id": {
+          "year": 2024,
+          "month": 9
+        },
+        "total": 89,
+        "users": [
+          "65a1c6d5fc3ed628b199b4a5"
+        ]
+      },
+      {
+        "_id": {
+          "year": 2024,
+          "month": 10
+        },
+        "total": 163,
+        "users": [
+          "65a1c6d5fc3ed628b199b4a5"
+        ]
+      },
+      {
+        "_id": {
+          "year": 2024,
+          "month": 11
+        },
+        "total": 73,
+        "users": [
+          "65a1c6d5fc3ed628b199b4a5"
+        ]
+      },
+      {
+        "_id": {
+          "year": 2024,
+          "month": 12
+        },
+        "total": 68,
+        "users": [
+          "65a1c6d5fc3ed628b199b4a5"
+        ]
+      },
+      {
+        "_id": {
+          "year": 2025,
+          "month": 1
+        },
+        "total": 39,
+        "users": [
+          "65a1c6d5fc3ed628b199b4a5"
+        ]
+      },
+      {
+        "_id": {
+          "year": 2025,
+          "month": 2
+        },
+        "total": 53,
+        "users": [
+          "65739e40e8c0935ec34d97a2",
+          "65a1c6d5fc3ed628b199b4a5"
+        ]
+      }
+    ],
+    "totalMonthlyVisits": 1,
+    "diff_percent": 135.8974358974359
+  };
+  const series = data.groupedData.map((serie) => serie.total);
+
+  const categories = data.groupedData.map((category) => `${category._id.month}/${category._id.year}`);
+  const token = useAppSelector((state) => state.auth.token);
+  const [dataGraf, setDataGraf] = useState(data);
+  const url = CONFIG.urlNotifications;
+  const fetchData = () => {
+    fetch(`${url}/notifications/visits`,{
+      method: "GET",
+      headers: { Authorization : `Bearer ${token}`}
+    }).then(async res => {
+      const response = await res.json();
+      console.log("response-graf",response);
+
+      setDataGraf(response);
+    })
+  }
+
+  useEffect(() => {
+    if(dataGraf.totalMonthlyVisits === 1)
+      fetchData();
+  })
+
   return (
     <DashboardContent maxWidth="xl">
       <Typography variant="h4" sx={{ mb: { xs: 3, md: 5 } }}>
@@ -29,16 +204,27 @@ export function OverviewAnalyticsView() {
 
       <Grid container spacing={3}>
         <Grid xs={12} sm={6} md={3}>
-          <AnalyticsWidgetSummary
-            title="Weekly sales"
-            percent={2.6}
-            total={714000}
+          {!dataGraf ? <AnalyticsWidgetSummary
+            title="Monthly visits"
+            percent={data.diff_percent < 100 ? (-data.diff_percent) : data.diff_percent - 100}
+            total={data.totalMonthlyVisits}
             icon={<img alt="icon" src="/assets/icons/glass/ic-glass-bag.svg" />}
             chart={{
-              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-              series: [22, 8, 35, 50, 82, 84, 77, 12],
+              categories,
+              series,
+            }}
+          />:
+          <AnalyticsWidgetSummary
+            title="Monthly visits"
+            percent={dataGraf.diff_percent < 100 ? (-dataGraf.diff_percent) : dataGraf.diff_percent - 100}
+            total={dataGraf.totalMonthlyVisits}
+            icon={<img alt="icon" src="/assets/icons/glass/ic-glass-bag.svg" />}
+            chart={{
+              categories,
+              series,
             }}
           />
+          }
         </Grid>
 
         <Grid xs={12} sm={6} md={3}>
