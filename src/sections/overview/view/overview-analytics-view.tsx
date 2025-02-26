@@ -174,10 +174,10 @@ export function OverviewAnalyticsView() {
     "diff_percent": 135.8974358974359
   };
   const series = data.groupedData.map((serie) => serie.total);
-
   const categories = data.groupedData.map((category) => `${category._id.month}/${category._id.year}`);
   const token = useAppSelector((state) => state.auth.token);
   const [dataGraf, setDataGraf] = useState(data);
+  const [dataGrafLogin, setDataGrafLogin] = useState(data);
   const url = CONFIG.urlNotifications;
   const fetchData = () => {
     fetch(`${url}/notifications/visits`,{
@@ -190,10 +190,23 @@ export function OverviewAnalyticsView() {
       setDataGraf(response);
     })
   }
+  const fetchDataLogin = () => {
+    fetch(`${url}/notifications/logins`,{
+      method: "GET",
+      headers: { Authorization : `Bearer ${token}`}
+    }).then(async res => {
+      const response = await res.json();
+      console.log("response-graf-login",response);
 
+      setDataGrafLogin(response);
+    })
+  }
   useEffect(() => {
     if(dataGraf.totalMonthlyVisits === 1)
       fetchData();
+    if(dataGrafLogin.totalMonthlyVisits === 1)
+      fetchDataLogin();
+
   })
 
   return (
@@ -218,27 +231,27 @@ export function OverviewAnalyticsView() {
             title="Monthly visits"
             percent={dataGraf.diff_percent < 100 ? (-dataGraf.diff_percent) : dataGraf.diff_percent - 100}
             total={dataGraf.totalMonthlyVisits}
-            icon={<img alt="icon" src="/assets/icons/glass/ic-glass-bag.svg" />}
+            icon={<img alt="icon" src="/assets/icons/glass/ic-glass-users.svg" />}
             chart={{
-              categories,
-              series,
+              categories: dataGraf.groupedData.map((category) => `${category._id.month}/${category._id.year}`),
+              series: dataGraf.groupedData.map((serie) => serie.total),
             }}
           />
           }
         </Grid>
 
         <Grid xs={12} sm={6} md={3}>
-          <AnalyticsWidgetSummary
-            title="New users"
-            percent={-0.1}
-            total={1352831}
+          {dataGrafLogin && <AnalyticsWidgetSummary
+            title="Users login"
+            percent={dataGrafLogin.diff_percent < 100 ? (-dataGrafLogin.diff_percent) : dataGrafLogin.diff_percent - 100}
+            total={dataGrafLogin.totalMonthlyVisits}
             color="secondary"
             icon={<img alt="icon" src="/assets/icons/glass/ic-glass-users.svg" />}
             chart={{
-              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-              series: [56, 47, 40, 62, 73, 30, 23, 54],
+              categories: dataGrafLogin.groupedData.map((category) => `${category._id.month}/${category._id.year}`),
+              series: dataGrafLogin.groupedData.map((serie) => serie.total),
             }}
-          />
+          />}
         </Grid>
 
         <Grid xs={12} sm={6} md={3}>
