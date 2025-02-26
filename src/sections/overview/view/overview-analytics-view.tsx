@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 
+import { Skeleton } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 
@@ -178,6 +179,7 @@ export function OverviewAnalyticsView() {
   const token = useAppSelector((state) => state.auth.token);
   const [dataGraf, setDataGraf] = useState(data);
   const [dataGrafLogin, setDataGrafLogin] = useState(data);
+  const [isLoading, setLoading] = useState(true);
   const url = CONFIG.urlNotifications;
   const fetchData = () => {
     fetch(`${url}/notifications/visits`,{
@@ -186,7 +188,6 @@ export function OverviewAnalyticsView() {
     }).then(async res => {
       const response = await res.json();
       console.log("response-graf",response);
-
       setDataGraf(response);
     })
   }
@@ -199,6 +200,7 @@ export function OverviewAnalyticsView() {
       console.log("response-graf-login",response);
 
       setDataGrafLogin(response);
+      setLoading(false)
     })
   }
   useEffect(() => {
@@ -217,16 +219,7 @@ export function OverviewAnalyticsView() {
 
       <Grid container spacing={3}>
         <Grid xs={12} sm={6} md={3}>
-          {!dataGraf ? <AnalyticsWidgetSummary
-            title="Monthly visits"
-            percent={data.diff_percent < 100 ? (-data.diff_percent) : data.diff_percent - 100}
-            total={data.totalMonthlyVisits}
-            icon={<img alt="icon" src="/assets/icons/glass/ic-glass-bag.svg" />}
-            chart={{
-              categories,
-              series,
-            }}
-          />:
+        {isLoading ? <Skeleton width="100%" height="100%" />:
           <AnalyticsWidgetSummary
             title="Monthly visits"
             percent={dataGraf.diff_percent < 100 ? (-dataGraf.diff_percent) : dataGraf.diff_percent - 100}
@@ -241,7 +234,7 @@ export function OverviewAnalyticsView() {
         </Grid>
 
         <Grid xs={12} sm={6} md={3}>
-          {dataGrafLogin && <AnalyticsWidgetSummary
+          {isLoading ? <Skeleton width="100%" height="100%" /> : <AnalyticsWidgetSummary
             title="Users login"
             percent={dataGrafLogin.diff_percent < 100 ? (-dataGrafLogin.diff_percent) : dataGrafLogin.diff_percent - 100}
             total={dataGrafLogin.totalMonthlyVisits}
@@ -255,7 +248,7 @@ export function OverviewAnalyticsView() {
         </Grid>
 
         <Grid xs={12} sm={6} md={3}>
-          <AnalyticsWidgetSummary
+        {isLoading ? <Skeleton width="100%" height="100%" /> : <AnalyticsWidgetSummary
             title="Purchase orders"
             percent={2.8}
             total={1723315}
@@ -265,11 +258,11 @@ export function OverviewAnalyticsView() {
               categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
               series: [40, 70, 50, 28, 70, 75, 7, 64],
             }}
-          />
+          /> }
         </Grid>
 
         <Grid xs={12} sm={6} md={3}>
-          <AnalyticsWidgetSummary
+        {isLoading ? <Skeleton width="100%" height="100%" /> : <AnalyticsWidgetSummary
             title="Messages"
             percent={3.6}
             total={234}
@@ -279,11 +272,11 @@ export function OverviewAnalyticsView() {
               categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
               series: [56, 30, 23, 54, 47, 40, 62, 73],
             }}
-          />
+          />}
         </Grid>
 
         <Grid xs={12} md={6} lg={4}>
-          <AnalyticsCurrentVisits
+        {isLoading ? <Skeleton width="100%" height="100%" /> : <AnalyticsCurrentVisits
             title="Current visits"
             chart={{
               series: [
@@ -293,21 +286,21 @@ export function OverviewAnalyticsView() {
                 { label: 'Africa', value: 500 },
               ],
             }}
-          />
+          /> }
         </Grid>
 
         <Grid xs={12} md={6} lg={8}>
-          <AnalyticsWebsiteVisits
+        {isLoading ? <Skeleton width="100%" height="100%" /> : <AnalyticsWebsiteVisits
             title="Website visits"
-            subheader="(+43%) than last year"
+            subheader={`${(dataGrafLogin.diff_percent < 100 ? (-dataGrafLogin.diff_percent) : dataGrafLogin.diff_percent - 100).toString()  }% than last year`}
             chart={{
-              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+              categories: dataGraf.groupedData.map((category) => `${category._id.month}/${category._id.year}`),
               series: [
-                { name: 'Team A', data: [43, 33, 22, 37, 67, 68, 37, 24, 55] },
-                { name: 'Team B', data: [51, 70, 47, 67, 40, 37, 24, 70, 24] },
+                { name: 'Visits', data: dataGraf.groupedData.map((serie) => serie.total) },
+                { name: 'Logins', data: dataGrafLogin.groupedData.map((serie) => serie.total) },
               ],
             }}
-          />
+          /> }
         </Grid>
 
         <Grid xs={12} md={6} lg={8}>
