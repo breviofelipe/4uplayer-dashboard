@@ -229,7 +229,7 @@ export function OverviewAnalyticsView() {
 
       <Grid container spacing={3}>
         <Grid xs={12} sm={6} md={3}>
-        {isLoading ? <Skeleton width="100%" height="100%" />:
+        {isLoading ? <Skeleton width="100%" height="235px" />:
           <AnalyticsWidgetSummary
             title="Monthly Visits"
             percent={dataGraf.diff_percent < 100 ? (-dataGraf.diff_percent) : dataGraf.diff_percent - 100}
@@ -299,7 +299,7 @@ export function OverviewAnalyticsView() {
           /> }
         </Grid>
         <Grid xs={12} md={6} lg={8}>
-        {isLoading ? <Skeleton width="100%" height="100%" /> : <AnalyticsWebsiteVisits
+        {isLoading ? <Skeleton width="100%" height="335px" /> : <AnalyticsWebsiteVisits
             title="Interactions"
             subheader={`${dataGrafPost.groupedData
               .map((serie) => serie.totalEngajamento || 0)
