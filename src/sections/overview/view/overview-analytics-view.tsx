@@ -12,6 +12,8 @@ import { CONFIG } from 'src/config-global';
 import { _tasks, _posts, _timeline } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
 
+import { Iconify } from 'src/components/iconify';
+
 import { AnalyticsNews } from '../analytics-news';
 import { AnalyticsTasks } from '../analytics-tasks';
 import { AnalyticsCurrentVisits } from '../analytics-current-visits';
@@ -165,6 +167,9 @@ export function OverviewAnalyticsView() {
           "month": 2
         },
         "total": 53,
+        totalEngajamento: 234,
+        likes: 123,
+        comments: 111,
         "users": [
           "65739e40e8c0935ec34d97a2",
           "65a1c6d5fc3ed628b199b4a5"
@@ -172,6 +177,7 @@ export function OverviewAnalyticsView() {
       }
     ],
     "totalMonthlyVisits": 1,
+    totalMonthlyPost: 1,
     "diff_percent": 135.8974358974359
   };
   const series = data.groupedData.map((serie) => serie.total);
@@ -179,38 +185,42 @@ export function OverviewAnalyticsView() {
   const token = useAppSelector((state) => state.auth.token);
   const [dataGraf, setDataGraf] = useState(data);
   const [dataGrafLogin, setDataGrafLogin] = useState(data);
+  const [dataGrafPost, setDataGrafPost] = useState(data);
   const [isLoading, setLoading] = useState(true);
   const url = CONFIG.urlNotifications;
-  const fetchData = () => {
-    fetch(`${url}/notifications/visits`,{
-      method: "GET",
-      headers: { Authorization : `Bearer ${token}`}
-    }).then(async res => {
-      const response = await res.json();
-      console.log("response-graf",response);
-      setDataGraf(response);
-    })
-  }
-  const fetchDataLogin = () => {
-    fetch(`${url}/notifications/logins`,{
-      method: "GET",
-      headers: { Authorization : `Bearer ${token}`}
-    }).then(async res => {
-      const response = await res.json();
-      console.log("response-graf-login",response);
 
-      setDataGrafLogin(response);
+  const fetchDataGraphs = () => {
+    fetch(`${url}/notifications/graphs`,{
+      method: "GET",
+      headers: { Authorization : `Bearer ${token}`}
+    }).then(async res => {
+      const response = await res.json();
+      setDataGrafPost(response[0]);
+      setDataGrafLogin(response[1]);
+      setDataGraf(response[2]);
       setLoading(false)
     })
   }
   useEffect(() => {
-    if(dataGraf.totalMonthlyVisits === 1)
-      fetchData();
     if(dataGrafLogin.totalMonthlyVisits === 1)
-      fetchDataLogin();
+      fetchDataGraphs();
 
   })
+  function diferencaPercentual(arr: number[]) {
+    if (arr.length < 2) return null; // Garante que há pelo menos dois valores
 
+    const novo = arr[arr.length - 1];   // Último valor
+    const antigo = arr[arr.length - 2]; // Penúltimo valor
+
+    if (antigo === 0) return null; // Evita divisão por zero
+
+    const diferenca = ((novo - antigo) / antigo) * 100;
+    return `${diferenca.toFixed(2)  }%`; // Formata com 2 casas decimais
+}
+  const interationPercent = () => {
+    const percent = diferencaPercentual(dataGrafPost.groupedData.map((serie) => serie.totalEngajamento || 0));
+    return percent ? parseFloat(percent) : 0;
+  }
   return (
     <DashboardContent maxWidth="xl">
       <Typography variant="h4" sx={{ mb: { xs: 3, md: 5 } }}>
@@ -221,10 +231,10 @@ export function OverviewAnalyticsView() {
         <Grid xs={12} sm={6} md={3}>
         {isLoading ? <Skeleton width="100%" height="100%" />:
           <AnalyticsWidgetSummary
-            title="Monthly visits"
+            title="Monthly Visits"
             percent={dataGraf.diff_percent < 100 ? (-dataGraf.diff_percent) : dataGraf.diff_percent - 100}
             total={dataGraf.totalMonthlyVisits}
-            icon={<img alt="icon" src="/assets/icons/glass/ic-glass-users.svg" />}
+            icon={<Iconify icon="solar:eye-bold-duotone" width={64} />}
             chart={{
               categories: dataGraf.groupedData.map((category) => `${category._id.month}/${category._id.year}`),
               series: dataGraf.groupedData.map((serie) => serie.total),
@@ -235,7 +245,7 @@ export function OverviewAnalyticsView() {
 
         <Grid xs={12} sm={6} md={3}>
           {isLoading ? <Skeleton width="100%" height="100%" /> : <AnalyticsWidgetSummary
-            title="Users login"
+            title="Monthly Users login"
             percent={dataGrafLogin.diff_percent < 100 ? (-dataGrafLogin.diff_percent) : dataGrafLogin.diff_percent - 100}
             total={dataGrafLogin.totalMonthlyVisits}
             color="secondary"
@@ -249,28 +259,28 @@ export function OverviewAnalyticsView() {
 
         <Grid xs={12} sm={6} md={3}>
         {isLoading ? <Skeleton width="100%" height="100%" /> : <AnalyticsWidgetSummary
-            title="Purchase orders"
-            percent={2.8}
-            total={1723315}
+            title="Monthly Posts"
+            percent={dataGrafPost.diff_percent < 100 ? (-dataGrafPost.diff_percent) : dataGrafPost.diff_percent - 100}
+            total={dataGrafPost.totalMonthlyPost}
             color="warning"
-            icon={<img alt="icon" src="/assets/icons/glass/ic-glass-buy.svg" />}
+            icon={<Iconify icon="solar:notes-bold" width={64} />}
             chart={{
-              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-              series: [40, 70, 50, 28, 70, 75, 7, 64],
+              categories: dataGrafPost.groupedData.map((category) => `${category._id.month}/${category._id.year}`),
+              series: dataGrafPost.groupedData.map((serie) => serie.total),
             }}
           /> }
         </Grid>
 
         <Grid xs={12} sm={6} md={3}>
         {isLoading ? <Skeleton width="100%" height="100%" /> : <AnalyticsWidgetSummary
-            title="Messages"
-            percent={3.6}
-            total={234}
+            title="Monthly Interactions"
+            percent={interationPercent()}
+            total={Number(dataGrafPost.groupedData[dataGrafPost.groupedData.length - 1].totalEngajamento)}
             color="error"
-            icon={<img alt="icon" src="/assets/icons/glass/ic-glass-message.svg" />}
+            icon={<Iconify icon="solar:like-bold" width={64} />}
             chart={{
-              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-              series: [56, 30, 23, 54, 47, 40, 62, 73],
+              categories: dataGrafPost.groupedData.map((category) => `${category._id.month}/${category._id.year}`),
+              series: dataGrafPost.groupedData.map((serie) => serie.totalEngajamento || 0),
             }}
           />}
         </Grid>
@@ -288,16 +298,19 @@ export function OverviewAnalyticsView() {
             }}
           /> }
         </Grid>
-
         <Grid xs={12} md={6} lg={8}>
         {isLoading ? <Skeleton width="100%" height="100%" /> : <AnalyticsWebsiteVisits
-            title="Website visits"
-            subheader={`${(dataGrafLogin.diff_percent < 100 ? (-dataGrafLogin.diff_percent) : dataGrafLogin.diff_percent - 100).toString()  }% than last year`}
+            title="Interactions"
+            subheader={`${dataGrafPost.groupedData
+              .map((serie) => serie.totalEngajamento || 0)
+              .reduce((total, num) => total + num, 0)
+              .toFixed(0)
+            } interations than last year`}
             chart={{
-              categories: dataGraf.groupedData.map((category) => `${category._id.month}/${category._id.year}`),
+              categories: dataGrafPost.groupedData.map((category) => `${category._id.month}/${category._id.year}`),
               series: [
-                { name: 'Visits', data: dataGraf.groupedData.map((serie) => serie.total) },
-                { name: 'Logins', data: dataGrafLogin.groupedData.map((serie) => serie.total) },
+                { name: 'Likes', data: dataGrafPost.groupedData.map((serie) => serie.likes || 0) },
+                { name: 'Comments', data: dataGrafPost.groupedData.map((serie) => serie.comments || 0) },
               ],
             }}
           /> }
