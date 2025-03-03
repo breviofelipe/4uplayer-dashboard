@@ -15,6 +15,7 @@ import { useAppSelector } from './hooks/hookes';
 
 export const HomePage = lazy(() => import('src/pages/home'));
 export const BlogPage = lazy(() => import('src/pages/blog'));
+export const GamePage = lazy(() => import('src/pages/games'));
 export const UserPage = lazy(() => import('src/pages/user'));
 export const TransfersPage = lazy(() => import('src/pages/transfers'));
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
@@ -60,6 +61,7 @@ export function Router() {
         { path: 'products', element: <ProductsPage /> },
         { path: 'ads', element: <AdsPage /> },
         { path: 'blog', element: <BlogPage /> },
+        { path: 'games', element: <GamePage /> },
       ],
     },
     {

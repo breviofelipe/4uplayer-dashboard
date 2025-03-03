@@ -55,4 +55,10 @@ export const navData = [
       </Label>
     )
   }
+  ,
+  {
+    title: 'Games',
+    path: '/games',
+    icon: <Icon icon="ph:game-controller-fill" width="24" height="24" />,
+  }
 ];
