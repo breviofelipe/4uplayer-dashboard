@@ -96,6 +96,44 @@ export function GameItem({
     padding: 0.5
     }}
   /></>
+
+  const submitAttributs = async (event: any) => {
+    
+    event.preventDefault();
+      const formData = new FormData(event.currentTarget);
+
+      const imageBase64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        const imageFile = formData.get('image') as Blob | null;
+        if (imageFile) {
+          reader.readAsDataURL(imageFile);
+        } else {
+          reject(new Error('No image file selected'));
+        }
+      });
+
+      const newAttribute = {
+        name: formData.get('name'),
+        value: formData.get('value'),
+        image: imageBase64,
+      };
+      // game.atributs.push(newAttribute);
+      
+      const response = await fetch(`${CONFIG.urlUsers}/games/${game.id}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newAttribute)
+      });
+      if(response.ok){
+        fetchGames();
+      }
+
+    }
   const render = (
     <>
       <Box display="flex" justifyContent="space-between">
@@ -119,17 +157,7 @@ export function GameItem({
             <Box mt={2}>
             <Typography>Add New Attribute:</Typography>
             <form
-              onSubmit={(e) => {
-              e.preventDefault();
-              const formData = new FormData(e.currentTarget);
-              const newAttribute = {
-                name: formData.get('name'),
-                value: formData.get('value'),
-                image: formData.get('image'),
-              };
-              game.atributs.push(newAttribute);
-              e.currentTarget.reset();
-              }}
+              onSubmit={submitAttributs}
             >
               <Box display="flex" flexDirection="column" gap={2}>
               <TextField type="text" name="name" placeholder="Attribute Name" required />
