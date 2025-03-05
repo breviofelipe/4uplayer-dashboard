@@ -23,7 +23,7 @@ export type GameItemProps = {
   photoBlackBackground: string;
   photoNoBackground: string;
   photoWhiteBackground: string;
-  atributs: any;
+  attributs: any;
 };
 
 export function GameItem({
@@ -150,9 +150,15 @@ export function GameItem({
           <Box display="flex" justifyContent="space-between">
             {renderImages('contain')}
           </Box>
-          <Box mt={2}>
-            <Typography>Attributes:</Typography>
-            <pre>{JSON.stringify(game.atributs, null, 2)}</pre>
+            <Typography mt={2}>Attributes:</Typography>
+          <Box mt={2} display="flex" gap={2}>
+            {/* <pre>{JSON.stringify(game.attributs, null, 2)}</pre> */}
+            {game.attributs.attributs && game.attributs.attributs.map((attribut: any) => (
+              <Box key={attribut.name} display="flex" flexDirection="column" gap={2}>
+                <Typography>{attribut.name}: {attribut.value}</Typography>
+                <img src={attribut.image} alt={attribut.name} style={{width: 200, height: 200}} />
+              </Box>
+            ))}
           </Box>
             <Box mt={2}>
             <Typography>Add New Attribute:</Typography>

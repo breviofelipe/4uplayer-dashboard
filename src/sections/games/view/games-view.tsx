@@ -30,7 +30,7 @@ interface Game {
   photoBlackBackground: string;
   photoNoBackground: string;
   photoWhiteBackground: string;
-  atributs: any;
+  attributs: any;
 }
 
 interface GameResponse {
