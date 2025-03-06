@@ -1,18 +1,17 @@
 import type { CardProps } from '@mui/material/Card';
 
-import { useState } from 'react';
-
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import Drawer from '@mui/material/Drawer';
+import { IconButton } from '@mui/material';
 import Typography from '@mui/material/Typography';
-import { Link, Button, TextField, IconButton } from '@mui/material';
 
 import { useAppSelector } from 'src/routes/hooks/hookes';
 
 import { CONFIG } from 'src/config-global';
 
 import { Iconify } from 'src/components/iconify';
+
+import { GameView } from './view/game-view';
 
 // ----------------------------------------------------------------------
 
@@ -39,7 +38,7 @@ export function GameItem({
   latestPostLarge: boolean;
   fetchGames: () => void;
 }) {
-  const [open, setOpen] = useState(false);
+
   const token = useAppSelector((state) => state.auth.token);
   const deleteGame = async () => {
     const response = await fetch(`${CONFIG.urlUsers}/games/${game.id}`, {
@@ -54,13 +53,6 @@ export function GameItem({
     }
   }
 
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
 
   const renderImages = (objectFit: string ) => <><Box
@@ -97,85 +89,15 @@ export function GameItem({
     }}
   /></>
 
-  const submitAttributs = async (event: any) => {
-    
-    event.preventDefault();
-      const formData = new FormData(event.currentTarget);
-
-      const imageBase64 = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        const imageFile = formData.get('image') as Blob | null;
-        if (imageFile) {
-          reader.readAsDataURL(imageFile);
-        } else {
-          reject(new Error('No image file selected'));
-        }
-      });
-
-      const newAttribute = {
-        name: formData.get('name'),
-        value: formData.get('value'),
-        image: imageBase64,
-      };
-      // game.atributs.push(newAttribute);
-      
-      const response = await fetch(`${CONFIG.urlUsers}/games/${game.id}`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newAttribute)
-      });
-      if(response.ok){
-        fetchGames();
-      }
-
-    }
+  
   const render = (
     <>
       <Box display="flex" justifyContent="space-between">
       {renderImages('cover')}
       </Box>
       <Box p={2}>
-      <Link onClick={handleOpen} variant="h6">{game.name}</Link>
-      <Drawer anchor="right" open={open} onClose={handleClose}>
-        <Box p={2} width="80vw">
-          <Typography variant="h6">{game.name}</Typography>
-          <Typography variant="body2" color="text.secondary">
-            {game.category}
-          </Typography>
-          <Box display="flex" justifyContent="space-between">
-            {renderImages('contain')}
-          </Box>
-            <Typography mt={2}>Attributes:</Typography>
-          <Box mt={2} display="flex" gap={2}>
-            {/* <pre>{JSON.stringify(game.attributs, null, 2)}</pre> */}
-            {game.attributs.attributs && game.attributs.attributs.map((attribut: any) => (
-              <Box key={attribut.name} display="flex" flexDirection="column" gap={2}>
-                <Typography>{attribut.name}: {attribut.value}</Typography>
-                <img src={attribut.image} alt={attribut.name} style={{width: 200, height: 200}} />
-              </Box>
-            ))}
-          </Box>
-            <Box mt={2}>
-            <Typography>Add New Attribute:</Typography>
-            <form
-              onSubmit={submitAttributs}
-            >
-              <Box display="flex" flexDirection="column" gap={2}>
-              <TextField type="text" name="name" placeholder="Attribute Name" required />
-              <TextField type="text" name="value" placeholder="Attribute Value" required />
-              <TextField type="file" name="image" required />
-              <Button type="submit">Add Attribute</Button>
-              </Box>
-            </form>
-            </Box>
-        </Box>
-      </Drawer>
-        
+      
+        <GameView game={game} fetchGames={fetchGames}/>
         <Typography variant="body2" color="text.secondary">
           {game.category}
         </Typography>
