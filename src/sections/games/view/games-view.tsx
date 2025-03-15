@@ -31,6 +31,7 @@ interface Game {
   photoNoBackground: string;
   photoWhiteBackground: string;
   attributs: any;
+  provider: string;
 }
 
 interface GameResponse {
@@ -79,6 +80,7 @@ export function GamesView() {
     photoNoBackground: null,
     photoWhiteBackground: null,
     photoBlackBackground: null,
+    provider: []
   };
   
   const [image, setImage] = useState<string | ArrayBuffer | null>(null);
@@ -119,7 +121,8 @@ export function GamesView() {
       category: data.category,
       photoNoBackground: image,
       photoWhiteBackground: image1,
-      photoBlackBackground: image2
+      photoBlackBackground: image2,
+      provider: data.provider
     }
 
     console.log("formdata", body);
@@ -146,61 +149,88 @@ export function GamesView() {
           name="name"
           control={control}
           render={({ field }) => (
-            <TextField {...field} label="Name" fullWidth margin="normal" />
+        <TextField {...field} label="Name" fullWidth margin="normal" />
           )}
         />
         <Controller
           name="category"
           control={control}
           render={({ field }) => (
-            <TextField
-              {...field}
-              label="Category"
-              fullWidth
-              margin="normal"
-             />
+        <TextField
+          {...field}
+          label="Category"
+          fullWidth
+          margin="normal"
+         />
           )}
         />
-         <Box display="flex" justifyContent="space-arround">
+        <Controller
+          name="provider"
+          control={control}
+          render={({ field }) => (
+        <TextField
+          {...field}
+          label="Provider"
+          fullWidth
+          margin="normal"
+        />
+          )}
+        />
+        <Controller
+          name="provider"
+          control={control}
+          render={({ field }) => (
+        <TextField
+          {...field}
+          label="Provider"
+          fullWidth
+          margin="normal"
+          multiline
+          rows={4}
+          placeholder="Enter providers separated by commas"
+        />
+          )}
+        />
+        <Box display="flex" justifyContent="space-around">
           <Controller
-            name="photoNoBackground"
-            control={control}
-            render={() => (
-              <Box sx={{
-                width: '32%',
-                height: 300,
-                padding: 1
-                }}><Label>No Background</Label>
-              <FileDropzoneGame onFilesAccepted={handleFilesAccepted} setImage={setImage}/></Box>
-            )}
+        name="photoNoBackground"
+        control={control}
+        render={() => (
+          <Box sx={{
+            width: '32%',
+            height: 300,
+            padding: 1
+            }}><Label>No Background</Label>
+          <FileDropzoneGame onFilesAccepted={handleFilesAccepted} setImage={setImage}/></Box>
+        )}
           />
           <Controller
-            name="photoWhiteBackground"
-            control={control}
-            render={() => (
-              <Box sx={{
-                width: '32%',
-                height: 300,
-                padding: 1
-                }}>
-              <Label>White Background</Label>
-              <FileDropzoneGame onFilesAccepted={handleFilesAccepted} setImage={setImage1}/>
-              </Box>
-            )}
+        name="photoWhiteBackground"
+        control={control}
+        render={() => (
+          <Box sx={{
+            width: '32%',
+            height: 300,
+            padding: 1
+            }}>
+          <Label>White Background</Label>
+          <FileDropzoneGame onFilesAccepted={handleFilesAccepted} setImage={setImage1}/>
+          </Box>
+        )}
           />
           <Controller
-            name="photoBlackBackground"
-            control={control}
-            render={() => (
-              <Box sx={{
-                width: '32%',
-                height: 300,
-                padding: 1
-                }}>
-              <Label>Black Background</Label>
-              <FileDropzoneGame onFilesAccepted={handleFilesAccepted} setImage={setImage2}/>
-              </Box>
-            )}
+        name="photoBlackBackground"
+        control={control}
+        render={() => (
+          <Box sx={{
+            width: '32%',
+            height: 300,
+            padding: 1
+            }}>
+          <Label>Black Background</Label>
+          <FileDropzoneGame onFilesAccepted={handleFilesAccepted} setImage={setImage2}/>
+          </Box>
+        )}
           />
          </Box>
         

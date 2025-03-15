@@ -6,6 +6,8 @@ import { useAppSelector } from "src/routes/hooks/hookes";
 
 import { CONFIG } from "src/config-global";
 
+import { Label } from "src/components/label";
+
 import PhotoGallery from "./components/PhotoGallery";
 
 import type { GameItemProps } from "../game-item";
@@ -65,7 +67,7 @@ export function GameView ({ game, fetchGames }: { game: GameItemProps, fetchGame
             case 0:
                 return (
                     <Box p={3}>
-                        <Typography variant="h6">Details</Typography>
+                        <Typography variant="h5">Details</Typography>
                         <Typography variant="body2" color="text.secondary">
                             Imagens
                         </Typography>
@@ -131,9 +133,18 @@ export function GameView ({ game, fetchGames }: { game: GameItemProps, fetchGame
     <Drawer anchor="bottom" open={open} onClose={handleClose} PaperProps={{ style: { height: '100vh' } }}>
       <Button onClick={handleClose} style={{ position: 'absolute', top: 10, right: 10 }}>exit</Button>
       <Box p={2} width="100vw">
-        <Typography variant="h6">{game.name}</Typography>
+        <Typography variant="h4">{game.name}</Typography>
+        <Box flexDirection='row' display='flex' gap='0.5rem'>
+        {game.provider.split(',').map((provider: string, index: number) => (
+            <Label mt='0.5rem' color="secondary" variant="outlined">
+                <Typography key={index}>{provider}</Typography>
+            </Label>
+        ))}
+        </Box>
         <Typography variant="body2" color="text.secondary">
-          {game.category}
+            <Label mt='0.5rem' color="warning" variant="filled">
+                {game.category}
+            </Label>
         </Typography>
         
 

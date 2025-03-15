@@ -9,6 +9,7 @@ import { useAppSelector } from 'src/routes/hooks/hookes';
 
 import { CONFIG } from 'src/config-global';
 
+import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 
 import { GameView } from './view/game-view';
@@ -23,6 +24,7 @@ export type GameItemProps = {
   photoNoBackground: string;
   photoWhiteBackground: string;
   attributs: any;
+  provider: string;
 };
 
 export function GameItem({
@@ -99,8 +101,17 @@ export function GameItem({
       
         <GameView game={game} fetchGames={fetchGames}/>
         <Typography variant="body2" color="text.secondary">
-          {game.category}
+          <Label mt='0.5rem' color="warning" variant="filled">
+            {game.category}
+          </Label>
         </Typography>
+        <Box mt='1rem' gap='0.5rem' flexDirection='row' display='flex' >
+        {game.provider.split(',').map((provider: string, index: number) => (
+            <Label color="secondary" variant="outlined">
+                <Typography key={index}>{provider}</Typography>
+            </Label>
+        ))}
+        </Box>
         <Box mt='1rem' flexDirection='row' display='flex' justifyContent='center'>
           <IconButton onClick={deleteGame}>
             <Iconify sx={{color: 'error.main', marginRight: 0.5}} width={18} icon="solar:trash-bin-trash-bold"/>
