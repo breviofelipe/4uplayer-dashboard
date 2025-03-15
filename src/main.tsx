@@ -1,4 +1,4 @@
-import { Suspense } from 'react';
+import { StrictMode, Suspense } from 'react';
 import { Provider } from 'react-redux';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
@@ -12,7 +12,7 @@ import { store } from './store';
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
 root.render(
-  // <StrictMode>
+  <StrictMode>
     <HelmetProvider>
       <BrowserRouter>
         <Suspense>
@@ -23,5 +23,5 @@ root.render(
         </Suspense>
       </BrowserRouter>
     </HelmetProvider>
-  // </StrictMode>
+  </StrictMode>
 );
