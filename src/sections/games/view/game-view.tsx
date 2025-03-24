@@ -21,7 +21,7 @@ export function GameView ({ game, fetchGames }: { game: GameItemProps, fetchGame
         width: '32%',
         height: 200,
         objectFit,
-        padding: 0.5
+        padding: 0.5, backgroundColor: 'black'
         }}
     />
     <Box
@@ -77,7 +77,16 @@ export function GameView ({ game, fetchGames }: { game: GameItemProps, fetchGame
                 return (
                     <Box p={3}>
                         <Typography variant="h6">Attributes</Typography>
-                        {/* <PhotoGallery data={data}  /> */}
+                        <Box p={3}>
+                        <Box mt={2} display="flex" gap={2}>
+                            {game.attributs.attributs && game.attributs.attributs.map((attribut: any) => (
+                                <Box key={attribut.name} display="flex" flexDirection="column" gap={2}>
+                                    <Typography>{attribut.name}: {attribut.value}</Typography>
+                                    <img src={attribut.image} alt={attribut.name} style={{width: 200, height: 200}} />
+                                </Box>
+                            ))}
+                        </Box>
+                    </Box>
                     </Box>
                 );
             case 2:
@@ -126,8 +135,8 @@ export function GameView ({ game, fetchGames }: { game: GameItemProps, fetchGame
           });
           if(response.ok){
             fetchGames();
+            alert('Attribute added successfully');
           }
-    
         }
     return <><Link onClick={handleOpen} variant="h6">{game.name}</Link>
     <Drawer anchor="bottom" open={open} onClose={handleClose} PaperProps={{ style: { height: '100vh' } }}>
@@ -165,16 +174,7 @@ export function GameView ({ game, fetchGames }: { game: GameItemProps, fetchGame
                     <Box display="flex" justifyContent="space-between">
                         {renderImages('contain')}
                     </Box>
-                    <Box p={3}>
-                        <Box mt={2} display="flex" gap={2}>
-                            {game.attributs.attributs && game.attributs.attributs.map((attribut: any) => (
-                                <Box key={attribut.name} display="flex" flexDirection="column" gap={2}>
-                                    <Typography>{attribut.name}: {attribut.value}</Typography>
-                                    <img src={attribut.image} alt={attribut.name} style={{width: 200, height: 200}} />
-                                </Box>
-                            ))}
-                        </Box>
-                    </Box>
+                    
                     <form onSubmit={submitAttributs}>
                         <TextField name="name" label="Name" fullWidth margin="normal" />
                         <TextField name="value" label="Value" fullWidth margin="normal" />

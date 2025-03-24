@@ -65,7 +65,8 @@ export function GameItem({
     width: '32%',
     height: 200,
     objectFit,
-    padding: 0.5
+    padding: 0.5,
+    backgroundColor: 'black'
     }}
   />
   <Box
