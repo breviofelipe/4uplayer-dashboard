@@ -9,6 +9,7 @@ import { CONFIG } from "src/config-global";
 import { Label } from "src/components/label";
 
 import PhotoGallery from "./components/PhotoGallery";
+import ModalAttributs from "./components/ModalAttributs";
 
 import type { GameItemProps } from "../game-item";
 
@@ -61,7 +62,11 @@ export function GameView ({ game, fetchGames }: { game: GameItemProps, fetchGame
     const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
         setTabIndex(newValue);
     };
+
+    const [modalOpen, setModalOpen] = useState(false);
     
+
+
     const renderTabContent = () => {
         switch (tabIndex) {
             case 0:
@@ -81,8 +86,9 @@ export function GameView ({ game, fetchGames }: { game: GameItemProps, fetchGame
                         <Box mt={2} display="flex" gap={2}>
                             {game.attributs.attributs && game.attributs.attributs.map((attribut: any) => (
                                 <Box key={attribut.name} display="flex" flexDirection="column" gap={2}>
-                                    <Typography>{attribut.name}: {attribut.value}</Typography>
+                                    <Typography>{attribut.name}</Typography>
                                     <img src={attribut.image} alt={attribut.name} style={{width: 200, height: 200}} />
+                                    <ModalAttributs attribut={attribut} />
                                 </Box>
                             ))}
                         </Box>
