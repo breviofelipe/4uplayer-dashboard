@@ -47,7 +47,7 @@ export default function PhotoGallery({game} : { game: string }) {
   
   const getData = useCallback(async () => {
     setLoading(true);
-    const response = await fetch(`${CONFIG.urlUsers}/fortnite/cosmetics`,{
+    const response = await fetch(`${CONFIG.urlUsers}/67cb98e95c17994c5b893949/cosmetics`,{
             method: "GET",
             headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
           });
